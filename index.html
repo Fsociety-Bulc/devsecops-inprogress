@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -363,13 +363,13 @@ pre.code .st{color:#bce8b0}
     <table>
       <thead><tr><th style="width:34%">Business Question</th><th>How the Framework Answers It</th><th style="width:22%">Primary Section</th></tr></thead>
       <tbody>
-        <tr><td><strong>How do we validate third-party software?</strong></td><td>A multi-gate pipeline: identity &amp; signature verification, provenance/attestation checks, SBOM ingestion, scanning (Trivy + Prisma Cloud), VEX reconciliation, and policy-as-code admission control before anything runs on OpenShift.</td><td><a href="#approval">&sect;05</a>, <a href="#repo-gov">&sect;06</a>, <a href="#image-trust">&sect;07</a>, <a href="#architecture">&sect;18</a></td></tr>
-        <tr><td><strong>How do we verify vendor responses?</strong></td><td>Evidence hierarchy: vendor assertions are accepted only when backed by signed VEX, reachability analysis, provenance, and corroborating runtime telemetry &mdash; cross-checked against independent scanner output.</td><td><a href="#validate-claims">&sect;11</a></td></tr>
-        <tr><td><strong>What evidence should be required?</strong></td><td>A tiered evidence matrix tied to vendor criticality and data sensitivity, from signature + SBOM at the floor to signed SLSA provenance + VEX + reachability for business-critical workloads.</td><td><a href="#onboarding">&sect;04</a>, <a href="#validate-claims">&sect;11</a>, <a href="#appendix">Appendix&nbsp;B</a></td></tr>
-        <tr><td><strong>How is risk acceptance managed?</strong></td><td>Formal exception workflow with risk scoring, compensating controls, time-boxed expiry, named accountable owner, and governance-board approval recorded in an audit trail.</td><td><a href="#risk-accept">&sect;16</a></td></tr>
-        <tr><td><strong>When is an image rejected?</strong></td><td>Deterministic rejection criteria: malware, invalid/absent signature, failed provenance, unresolved critical with no credible VEX, prohibited license, or expired exception.</td><td><a href="#repo-gov">&sect;06</a>, <a href="#risk-accept">&sect;16</a>, <a href="#appendix">Appendix&nbsp;A</a></td></tr>
-        <tr><td><strong>When can an exception be approved?</strong></td><td>When residual risk is understood, compensating controls exist, exposure is time-boxed, and an accountable owner accepts it at the right authority level.</td><td><a href="#risk-accept">&sect;16</a></td></tr>
-        <tr><td><strong>How is software monitored after deployment?</strong></td><td>Continuous re-scanning of registry contents, VEX/advisory feeds, runtime exploitability via eBPF, drift detection, and SBOM-driven impact analysis for newly disclosed CVEs.</td><td><a href="#runtime-mon">&sect;13</a>, <a href="#continuous">&sect;17</a></td></tr>
+        <tr><td><strong>How do we validate third-party software?</strong></td><td>A multi-gate pipeline: identity &amp; signature verification, provenance/attestation checks, SBOM ingestion, scanning (Trivy + Prisma Cloud), VEX reconciliation, and policy-as-code admission control before anything runs on OpenShift.</td><td><a href="#approval">05</a>, <a href="#repo-gov">06</a>, <a href="#image-trust">07</a>, <a href="#architecture">18</a></td></tr>
+        <tr><td><strong>How do we verify vendor responses?</strong></td><td>Evidence hierarchy: vendor assertions are accepted only when backed by signed VEX, reachability analysis, provenance, and corroborating runtime telemetry &mdash; cross-checked against independent scanner output.</td><td><a href="#validate-claims">11</a></td></tr>
+        <tr><td><strong>What evidence should be required?</strong></td><td>A tiered evidence matrix tied to vendor criticality and data sensitivity, from signature + SBOM at the floor to signed SLSA provenance + VEX + reachability for business-critical workloads.</td><td><a href="#onboarding">04</a>, <a href="#validate-claims">11</a>, <a href="#appendix">Appendix&nbsp;B</a></td></tr>
+        <tr><td><strong>How is risk acceptance managed?</strong></td><td>Formal exception workflow with risk scoring, compensating controls, time-boxed expiry, named accountable owner, and governance-board approval recorded in an audit trail.</td><td><a href="#risk-accept">16</a></td></tr>
+        <tr><td><strong>When is an image rejected?</strong></td><td>Deterministic rejection criteria: malware, invalid/absent signature, failed provenance, unresolved critical with no credible VEX, prohibited license, or expired exception.</td><td><a href="#repo-gov">06</a>, <a href="#risk-accept">16</a>, <a href="#appendix">Appendix&nbsp;A</a></td></tr>
+        <tr><td><strong>When can an exception be approved?</strong></td><td>When residual risk is understood, compensating controls exist, exposure is time-boxed, and an accountable owner accepts it at the right authority level.</td><td><a href="#risk-accept">16</a></td></tr>
+        <tr><td><strong>How is software monitored after deployment?</strong></td><td>Continuous re-scanning of registry contents, VEX/advisory feeds, runtime exploitability via eBPF, drift detection, and SBOM-driven impact analysis for newly disclosed CVEs.</td><td><a href="#runtime-mon">13</a>, <a href="#continuous">17</a></td></tr>
       </tbody>
     </table>
   </div>
@@ -829,7 +829,7 @@ flowchart LR
         <tr><td><strong>Suspicious newness</strong></td><td>Package version published &lt; N days ago</td><td><span class="pill high">Warn / hold</span></td><td>Mitigates fast-moving malicious releases (event-stream pattern).</td></tr>
         <tr><td><strong>Namespace / typosquat</strong></td><td>Name resembles a known popular package</td><td><span class="pill high">Quarantine</span></td><td>Defends against dependency-confusion &amp; typosquatting.</td></tr>
         <tr><td><strong>Integrity mismatch</strong></td><td>Hash differs from expected/declared</td><td><span class="pill crit">Quarantine</span></td><td>Codecov lesson &mdash; trust the hash, not the source URL.</td></tr>
-        <tr><td><strong>Prohibited license</strong></td><td>License on enterprise deny-list</td><td><span class="pill med">Block / warn</span></td><td>License governance (&sect;14).</td></tr>
+        <tr><td><strong>Prohibited license</strong></td><td>License on enterprise deny-list</td><td><span class="pill med">Block / warn</span></td><td>License governance (14).</td></tr>
         <tr><td><strong>Missing signature</strong></td><td>Tier&nbsp;1/2 image lacks valid signature</td><td><span class="pill high">Hold</span></td><td>Enforces Layer&nbsp;1 authenticity for sensitive workloads.</td></tr>
       </tbody>
     </table>
@@ -969,7 +969,7 @@ cosign verify-attestation --type <span class="st">slsaprovenance</span> \
   <h2>09 &middot; SBOM &mdash; One Component of the Framework</h2>
   <p class="lead">The Software Bill of Materials is essential, but it is a <strong>parts list</strong>, not a safety certificate. It tells you <em>what is inside</em>. It does not tell you whether what is inside is exploitable, reachable, or even truthfully declared. This framework treats the SBOM as Layer&nbsp;3 of seven &mdash; necessary, foundational, and deliberately not sufficient.</p>
 
-  <p>EO 14028 (&sect;10(j)) defines an SBOM as a "formal record containing the details and supply chain relationships of various components used in building software" &mdash; analogous to an ingredients label. Its enduring value was proven by Log4Shell: organizations with accurate component inventories could answer "are we affected, and where?" in hours; those without spent weeks.</p>
+  <p>EO 14028 (10(j)) defines an SBOM as a "formal record containing the details and supply chain relationships of various components used in building software" &mdash; analogous to an ingredients label. Its enduring value was proven by Log4Shell: organizations with accurate component inventories could answer "are we affected, and where?" in hours; those without spent weeks.</p>
 
   <h3>CycloneDX vs. SPDX</h3>
   <div class="table-wrap">
@@ -1032,7 +1032,7 @@ trivy image --format cyclonedx --output sbom.cdx.json <span class="st">vendor-x/
       <tbody>
         <tr><td><code>component_not_present</code></td><td>"We don't ship that component at all."</td><td>Independent SBOM regeneration (Trivy/Syft); binary composition analysis.</td></tr>
         <tr><td><code>vulnerable_code_not_present</code></td><td>"The component is there but the vulnerable code path isn't included."</td><td>Version/build reconciliation; function-level analysis.</td></tr>
-        <tr><td><code>vulnerable_code_not_in_execute_path</code></td><td>"The code exists but is never executed."</td><td>Reachability analysis + eBPF runtime confirmation (&sect;12).</td></tr>
+        <tr><td><code>vulnerable_code_not_in_execute_path</code></td><td>"The code exists but is never executed."</td><td>Reachability analysis + eBPF runtime confirmation (12).</td></tr>
         <tr><td><code>vulnerable_code_cannot_be_controlled_by_adversary</code></td><td>"An attacker can't reach the input that triggers it."</td><td>Architecture/exposure review; input-path analysis.</td></tr>
         <tr><td><code>inline_mitigations_already_exist</code></td><td>"A configuration or control already neutralizes it."</td><td>Configuration inspection; vendor advisory; runtime policy validation.</td></tr>
       </tbody>
@@ -1062,7 +1062,7 @@ trivy image --format cyclonedx --output sbom.cdx.json <span class="st">vendor-x/
       <li><strong>It is still an assertion.</strong> A signed VEX from a compromised or careless vendor can be wrong. Corroborate the high-impact ones.</li>
       <li><strong>Coverage is incomplete.</strong> Most vendors do not yet publish comprehensive VEX; absence is common, not proof of safety.</li>
       <li><strong>It can be gamed.</strong> A vendor could over-use <code>not_affected</code> to suppress noise. Track vendor VEX accuracy over time as a trust metric.</li>
-      <li><strong>Justifications need evidence.</strong> "not in execute path" is only as good as the analysis behind it &mdash; which is why &sect;12 exists.</li>
+      <li><strong>Justifications need evidence.</strong> "not in execute path" is only as good as the analysis behind it &mdash; which is why 12 exists.</li>
     </ul>
   </div>
 </section>
@@ -1115,7 +1115,7 @@ flowchart TB
   </ul>
 
   <h4>Claim C &mdash; "The vulnerable code isn't reachable / isn't executed"</h4>
-  <p>This is the hardest claim to verify without source, and where most enterprises stop. It is also where this framework adds the most value, by combining static reachability with runtime observation (detailed in &sect;12).</p>
+  <p>This is the hardest claim to verify without source, and where most enterprises stop. It is also where this framework adds the most value, by combining static reachability with runtime observation (detailed in 12).</p>
   <ol class="steps">
     <li><h4>Request the vendor's reachability evidence</h4><p>A credible vendor can supply call-graph or reachability analysis showing no path reaches the vulnerable function &mdash; expressed as VEX <code>vulnerable_code_not_in_execute_path</code>.</p></li>
     <li><h4>Run independent reachability analysis</h4><p>Use binary/bytecode call-graph tooling to test whether the vulnerable symbol is referenced on any reachable path in the delivered artifact.</p></li>
@@ -1180,7 +1180,7 @@ flowchart TB
 
   <div class="callout danger">
     <div class="ct">The XZ Caveat &mdash; Why Validation Has Limits</div>
-    <p>No combination of these techniques would have reliably caught the XZ Utils backdoor at intake: it was deliberately dormant, obfuscated, and triggered only under specific conditions. This is the residual that justifies the final layer &mdash; <strong>continuous runtime monitoring and behavioral anomaly detection</strong> (&sect;13). Validation reduces uncertainty; it never eliminates it. Govern accordingly: assume breach, monitor always.</p>
+    <p>No combination of these techniques would have reliably caught the XZ Utils backdoor at intake: it was deliberately dormant, obfuscated, and triggered only under specific conditions. This is the residual that justifies the final layer &mdash; <strong>continuous runtime monitoring and behavioral anomaly detection</strong> (13). Validation reduces uncertainty; it never eliminates it. Govern accordingly: assume breach, monitor always.</p>
   </div>
 </section>
 <!-- ================= 12 REACHABILITY ================= -->
@@ -1386,7 +1386,7 @@ flowchart TB
 
   <div class="callout rec">
     <div class="ct">Recommendation</div>
-    <p>Keep policy in version control alongside application code, peer-reviewed and tested like any other code, with changes flowing through the same Git-based pipeline. Run policies in <em>warn/audit</em> mode first to measure impact, then promote to <em>enforce</em>. Store the resulting decisions immutably for audit (&sect;17).</p>
+    <p>Keep policy in version control alongside application code, peer-reviewed and tested like any other code, with changes flowing through the same Git-based pipeline. Run policies in <em>warn/audit</em> mode first to measure impact, then promote to <em>enforce</em>. Store the resulting decisions immutably for audit (17).</p>
   </div>
 </section>
 
@@ -1568,7 +1568,7 @@ flowchart TB
       VAULT[("HashiCorp Vault<br/>signing keys + dynamic secrets")]
     end
     subgraph OCP["Red Hat OpenShift"]
-      ADM{{"Admission control<br/>OPA/Gatekeeper · Kyverno<br/>(verify sig + policy)"}}
+      ADM{{"Admission control<br/>OPA/Gatekeeper Â· Kyverno<br/>(verify sig + policy)"}}
       WL["Workloads<br/>(running containers)"]
       PRISMA["Prisma Cloud Defender<br/>+ eBPF (Falco/Tetragon)"]
     end
@@ -1648,7 +1648,7 @@ flowchart TB
   <div class="grid cols-2">
     <div class="card">
       <h4>Capital One &mdash; governance-as-code</h4>
-      <p>Capital One created and open-sourced <strong>Cloud Custodian</strong> (now a CNCF project), a policy-as-code engine for cloud governance. While focused on cloud-resource policy rather than image supply chain specifically, it publicly demonstrates a financial institution's embrace of <strong>policy-as-code</strong> &mdash; the same principle this framework applies at &sect;15.</p>
+      <p>Capital One created and open-sourced <strong>Cloud Custodian</strong> (now a CNCF project), a policy-as-code engine for cloud governance. While focused on cloud-resource policy rather than image supply chain specifically, it publicly demonstrates a financial institution's embrace of <strong>policy-as-code</strong> &mdash; the same principle this framework applies at 15.</p>
     </div>
     <div class="card illustrative" style="border-top:3px solid #8b6fb0">
       <h4>Insurers &amp; banks &mdash; sector posture <span class="pill na">illustrative</span></h4>
