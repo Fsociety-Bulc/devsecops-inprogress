@@ -1,0 +1,1920 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Third-Party Software Supply Chain Governance Framework</title>
+<meta name="description" content="An enterprise governance framework for validating third-party software, verifying vendor claims, and managing supply chain risk across a Red Hat OpenShift platform.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<style>
+:root{
+  --navy:#0b1f38;
+  --navy-2:#0f2a4d;
+  --navy-3:#15375f;
+  --steel:#2b577f;
+  --accent:#1f8fb3;
+  --accent-2:#27a3c9;
+  --red:#cc1f2d;
+  --red-soft:#e4566f;
+  --amber:#d98a1f;
+  --green:#1f9d6b;
+  --ink:#1c2430;
+  --muted:#5a6776;
+  --line:#e2e8f0;
+  --line-2:#cdd7e3;
+  --bg:#f5f7fa;
+  --card:#ffffff;
+  --shadow:0 1px 2px rgba(15,42,77,.06),0 8px 24px rgba(15,42,77,.06);
+  --shadow-lg:0 18px 48px rgba(11,31,56,.16);
+  --rad:14px;
+  --maxw:1080px;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;
+  font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  color:var(--ink);
+  background:var(--bg);
+  line-height:1.65;
+  font-size:16px;
+  -webkit-font-smoothing:antialiased;
+}
+h1,h2,h3,h4{line-height:1.25;color:var(--navy);font-weight:700;letter-spacing:-.01em}
+h2{font-size:1.85rem;margin:0 0 .35em}
+h3{font-size:1.3rem;margin:2em 0 .5em;color:var(--navy-2)}
+h4{font-size:1.05rem;margin:1.6em 0 .4em;color:var(--steel)}
+p{margin:0 0 1.05em}
+a{color:var(--accent);text-decoration:none}
+a:hover{text-decoration:underline}
+code,.mono{font-family:'JetBrains Mono',monospace;font-size:.86em}
+:not(pre)>code{background:#eef2f7;padding:.12em .4em;border-radius:5px;color:var(--navy-3);border:1px solid var(--line)}
+
+.layout{display:flex;min-height:100vh}
+.sidebar{
+  width:300px;flex:0 0 300px;background:var(--navy);color:#cdd9e8;
+  position:sticky;top:0;height:100vh;overflow-y:auto;padding:0;
+  border-right:1px solid #0a1a30;
+}
+.sidebar-brand{padding:26px 24px 18px;border-bottom:1px solid rgba(255,255,255,.08)}
+.sidebar-brand .logo{display:flex;align-items:center;gap:11px;margin-bottom:14px}
+.sidebar-brand .logo-mark{width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,var(--red),#8e1420);display:flex;align-items:center;justify-content:center;flex:0 0 34px}
+.sidebar-brand .logo-mark svg{width:19px;height:19px}
+.sidebar-brand .logo-txt{font-weight:700;color:#fff;font-size:.95rem;letter-spacing:.02em}
+.sidebar-brand .logo-sub{font-size:.7rem;color:#7e93ac;text-transform:uppercase;letter-spacing:.13em}
+.sidebar-brand .doc-title{font-size:.82rem;color:#9fb2c9;line-height:1.45;margin-top:6px}
+.nav{padding:14px 0 60px}
+.nav-group-label{font-size:.66rem;text-transform:uppercase;letter-spacing:.16em;color:#62758f;padding:18px 24px 7px;font-weight:600}
+.nav a{
+  display:block;color:#b4c3d6;padding:7px 24px 7px 24px;font-size:.83rem;
+  border-left:3px solid transparent;transition:all .15s;text-decoration:none;
+}
+.nav a:hover{background:rgba(255,255,255,.05);color:#fff;text-decoration:none}
+.nav a.active{background:rgba(31,143,179,.16);color:#fff;border-left-color:var(--accent-2)}
+.nav a .num{color:#5f748f;font-variant-numeric:tabular-nums;margin-right:8px;font-size:.78rem}
+
+.main{flex:1 1 auto;min-width:0}
+.content{max-width:var(--maxw);margin:0 auto;padding:0 48px 120px}
+
+.cover{
+  background:linear-gradient(140deg,#08182d 0%,var(--navy) 42%,var(--navy-3) 100%);
+  color:#fff;padding:84px 48px 70px;position:relative;overflow:hidden;
+}
+.cover::after{content:"";position:absolute;right:-160px;top:-120px;width:560px;height:560px;background:radial-gradient(circle,rgba(31,143,179,.30),transparent 62%);pointer-events:none}
+.cover::before{content:"";position:absolute;left:-120px;bottom:-160px;width:460px;height:460px;background:radial-gradient(circle,rgba(204,31,45,.18),transparent 64%);pointer-events:none}
+.cover-inner{max-width:var(--maxw);margin:0 auto;position:relative;z-index:1}
+.cover .eyebrow{display:inline-flex;align-items:center;gap:9px;font-size:.72rem;text-transform:uppercase;letter-spacing:.2em;color:#7fd0e6;border:1px solid rgba(127,208,230,.4);padding:6px 14px;border-radius:40px;margin-bottom:26px}
+.cover h1{color:#fff;font-size:2.95rem;line-height:1.1;margin:0 0 18px;max-width:18ch;font-weight:800}
+.cover .lede{font-size:1.16rem;color:#c5d6e8;max-width:60ch;font-weight:300;margin-bottom:34px}
+.cover-meta{display:flex;flex-wrap:wrap;gap:34px;margin-top:38px;padding-top:30px;border-top:1px solid rgba(255,255,255,.12)}
+.cover-meta div span{display:block}
+.cover-meta .k{font-size:.68rem;text-transform:uppercase;letter-spacing:.14em;color:#7e93ac;margin-bottom:4px}
+.cover-meta .v{font-size:.95rem;color:#e7eef6;font-weight:500;max-width:34ch}
+.cover-tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:30px}
+.cover-tags span{font-size:.73rem;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);color:#bcd0e6;padding:5px 12px;border-radius:30px}
+
+.section{padding:54px 0 8px;border-bottom:1px solid var(--line);scroll-margin-top:20px}
+.section:last-child{border-bottom:none}
+.section-tag{display:inline-block;font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.16em;color:var(--accent);margin-bottom:10px}
+.section-tag.red{color:var(--red)}
+.lead{font-size:1.12rem;color:#3a4759;font-weight:400;max-width:68ch}
+
+.grid{display:grid;gap:18px;margin:24px 0}
+.grid.cols-2{grid-template-columns:repeat(2,1fr)}
+.grid.cols-3{grid-template-columns:repeat(3,1fr)}
+.grid.cols-4{grid-template-columns:repeat(4,1fr)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--rad);padding:22px;box-shadow:var(--shadow)}
+.card h4{margin-top:0;color:var(--navy-2)}
+.card .icon{width:42px;height:42px;border-radius:11px;display:flex;align-items:center;justify-content:center;margin-bottom:14px;background:linear-gradient(135deg,var(--navy-3),var(--steel))}
+.card .icon svg{width:22px;height:22px;stroke:#fff;fill:none}
+.card.accent{border-top:3px solid var(--accent)}
+.card.red{border-top:3px solid var(--red)}
+.card.green{border-top:3px solid var(--green)}
+.card.amber{border-top:3px solid var(--amber)}
+.card .big-num{font-size:2.1rem;font-weight:800;color:var(--navy);line-height:1}
+.card .stat-label{font-size:.8rem;color:var(--muted)}
+
+.callout{border-radius:12px;padding:18px 20px 18px 22px;margin:22px 0;border:1px solid var(--line);background:var(--card);position:relative;border-left:4px solid var(--steel)}
+.callout .ct{font-weight:700;font-size:.78rem;text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px;display:flex;align-items:center;gap:8px}
+.callout p:last-child{margin-bottom:0}
+.callout.key{border-left-color:var(--accent);background:#f1f9fc}
+.callout.key .ct{color:var(--accent)}
+.callout.warn{border-left-color:var(--amber);background:#fdf7ed}
+.callout.warn .ct{color:var(--amber)}
+.callout.danger{border-left-color:var(--red);background:#fdf0f2}
+.callout.danger .ct{color:var(--red)}
+.callout.rec{border-left-color:var(--green);background:#eff9f4}
+.callout.rec .ct{color:var(--green)}
+.callout.illustrative{border-left-color:#8b6fb0;background:#f6f2fb}
+.callout.illustrative .ct{color:#7a52ad}
+
+.table-wrap{overflow-x:auto;margin:24px 0;border:1px solid var(--line);border-radius:var(--rad);box-shadow:var(--shadow)}
+table{width:100%;border-collapse:collapse;font-size:.88rem;background:var(--card);min-width:560px}
+thead th{background:var(--navy-2);color:#fff;text-align:left;padding:12px 15px;font-weight:600;font-size:.8rem;vertical-align:bottom}
+tbody td{padding:11px 15px;border-bottom:1px solid var(--line);vertical-align:top}
+tbody tr:nth-child(even){background:#f9fbfd}
+tbody tr:hover{background:#f1f6fb}
+.pill{display:inline-block;padding:2px 9px;border-radius:20px;font-size:.72rem;font-weight:600;white-space:nowrap}
+.pill.crit{background:#fae0e3;color:#a81322}
+.pill.high{background:#fbe9d6;color:#9a5a08}
+.pill.med{background:#fdf6d8;color:#856100}
+.pill.low{background:#dcf3e8;color:#0f6b45}
+.pill.info{background:#dceefa;color:#11567f}
+.pill.na{background:#e7ebf0;color:#5a6776}
+
+.diagram{background:var(--card);border:1px solid var(--line);border-radius:var(--rad);padding:26px 20px;margin:24px 0;box-shadow:var(--shadow);text-align:center;overflow-x:auto}
+.diagram .mermaid{display:flex;justify-content:center}
+.diagram .mermaid:not([data-processed="true"]){color:transparent;font-size:0;min-height:40px}
+.diagram-fallback{font-size:.85rem;color:var(--muted);background:#fdf7ed;border:1px solid #f0dcae;border-radius:10px;padding:14px 16px;text-align:left}
+.fig-cap{font-size:.8rem;color:var(--muted);margin-top:12px;text-align:center;font-style:italic}
+.fig-num{font-weight:600;color:var(--steel);font-style:normal}
+
+.matrix{display:grid;grid-template-columns:auto repeat(5,1fr);gap:4px;margin:24px 0;font-size:.78rem}
+.matrix .mh{background:var(--navy-2);color:#fff;padding:9px 6px;text-align:center;font-weight:600;border-radius:5px;display:flex;align-items:center;justify-content:center}
+.matrix .ml{background:#eef2f7;color:var(--navy);font-weight:600;padding:9px 6px;text-align:center;border-radius:5px;display:flex;align-items:center;justify-content:center}
+.matrix .cell{padding:11px 6px;text-align:center;border-radius:5px;font-weight:600;color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:52px;line-height:1.2}
+.cell.c-low{background:#1f9d6b}
+.cell.c-med{background:#d4a017}
+.cell.c-high{background:#dd7722}
+.cell.c-crit{background:#cc1f2d}
+.cell small{font-weight:400;opacity:.85;font-size:.92em}
+
+.steps{counter-reset:step;margin:24px 0;padding:0;list-style:none}
+.steps li{position:relative;padding:0 0 22px 52px;margin:0}
+.steps li::before{counter-increment:step;content:counter(step);position:absolute;left:0;top:0;width:34px;height:34px;border-radius:50%;background:var(--navy-2);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.9rem}
+.steps li::after{content:"";position:absolute;left:16px;top:34px;bottom:0;width:2px;background:var(--line-2)}
+.steps li:last-child::after{display:none}
+.steps li h4{margin:5px 0 4px}
+.steps li p{margin-bottom:0;font-size:.92rem;color:#475160}
+
+ul.clean{list-style:none;padding:0;margin:1em 0}
+ul.clean li{padding:6px 0 6px 28px;position:relative;border-bottom:1px solid var(--line)}
+ul.clean li:last-child{border-bottom:none}
+ul.clean li::before{content:"";position:absolute;left:4px;top:14px;width:8px;height:8px;border-radius:2px;background:var(--accent)}
+ul.check{list-style:none;padding:0;margin:1em 0}
+ul.check li{padding:5px 0 5px 30px;position:relative}
+ul.check li::before{content:"\2713";position:absolute;left:4px;top:5px;color:var(--green);font-weight:800}
+ul.cross{list-style:none;padding:0;margin:1em 0}
+ul.cross li{padding:5px 0 5px 30px;position:relative}
+ul.cross li::before{content:"\2715";position:absolute;left:5px;top:5px;color:var(--red);font-weight:800}
+
+.toc-section{background:var(--card);border:1px solid var(--line);border-radius:var(--rad);padding:8px 0;box-shadow:var(--shadow);margin:26px 0}
+.toc-section a{display:flex;padding:9px 22px;border-bottom:1px solid var(--line);color:var(--ink);font-size:.92rem}
+.toc-section a:last-child{border-bottom:none}
+.toc-section a:hover{background:#f1f6fb;text-decoration:none;color:var(--accent)}
+.toc-section a .tnum{color:var(--steel);font-weight:600;margin-right:14px;font-variant-numeric:tabular-nums;min-width:24px}
+
+.kicker-row{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin:18px 0}
+.chip{display:inline-flex;align-items:center;gap:7px;background:var(--card);border:1px solid var(--line-2);border-radius:30px;padding:6px 14px;font-size:.8rem;font-weight:500;color:var(--navy-2)}
+.chip svg{width:15px;height:15px;stroke:var(--accent);fill:none}
+
+.legend{display:flex;flex-wrap:wrap;gap:16px;margin:14px 0;font-size:.8rem}
+.legend span{display:inline-flex;align-items:center;gap:7px}
+.legend i{width:14px;height:14px;border-radius:4px;display:inline-block}
+
+pre.code{background:#0d2138;color:#cfe2f5;padding:18px 20px;border-radius:11px;overflow-x:auto;font-size:.82rem;line-height:1.55;margin:20px 0;border:1px solid #16314f;font-family:'JetBrains Mono',monospace}
+pre.code .cm{color:#6f88a6}
+pre.code .ky{color:#8fd6ee}
+pre.code .st{color:#bce8b0}
+
+.footer{background:var(--navy);color:#9fb2c9;padding:40px 48px;font-size:.85rem}
+.footer-inner{max-width:var(--maxw);margin:0 auto}
+.footer strong{color:#fff}
+.disclaimer{font-size:.78rem;color:#7e93ac;border-top:1px solid rgba(255,255,255,.1);margin-top:24px;padding-top:20px;line-height:1.6}
+
+.backtotop{position:fixed;right:24px;bottom:24px;width:46px;height:46px;border-radius:50%;background:var(--navy-2);color:#fff;display:flex;align-items:center;justify-content:center;box-shadow:var(--shadow-lg);opacity:0;pointer-events:none;transition:opacity .3s;z-index:50;border:none;cursor:pointer}
+.backtotop.show{opacity:1;pointer-events:auto}
+.backtotop svg{width:20px;height:20px;stroke:#fff;fill:none}
+.menu-toggle{display:none}
+
+@media(max-width:1024px){
+  .sidebar{position:fixed;left:0;top:0;z-index:100;transform:translateX(-100%);transition:transform .3s;box-shadow:var(--shadow-lg)}
+  .sidebar.open{transform:translateX(0)}
+  .menu-toggle{display:flex;position:fixed;top:16px;left:16px;z-index:101;width:46px;height:46px;border-radius:11px;background:var(--navy);border:none;color:#fff;align-items:center;justify-content:center;box-shadow:var(--shadow-lg);cursor:pointer}
+  .menu-toggle svg{width:22px;height:22px;stroke:#fff;fill:none}
+  .content{padding:0 22px 90px}
+  .cover{padding:84px 24px 56px}
+  .cover h1{font-size:2.2rem}
+}
+@media(max-width:720px){
+  .grid.cols-2,.grid.cols-3,.grid.cols-4{grid-template-columns:1fr}
+  .matrix{font-size:.6rem}
+  .cover h1{font-size:1.85rem}
+  h2{font-size:1.5rem}
+  .content{padding:0 16px 80px}
+}
+@media print{
+  .sidebar,.menu-toggle,.backtotop{display:none!important}
+  body{background:#fff;font-size:10.5pt}
+  .main{width:100%}
+  .content{max-width:none;padding:0 6mm}
+  .cover{-webkit-print-color-adjust:exact;print-color-adjust:exact;padding:40px}
+  .section{border-bottom:1px solid #ccc;padding:22px 0}
+  h2,h3{page-break-after:avoid}
+  .card,.callout,.diagram,.table-wrap,.matrix{page-break-inside:avoid}
+  thead th,.pill,.cell,.matrix .mh,.matrix .ml,.card .icon{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  a{color:var(--ink)}
+}
+</style>
+</head>
+<body>
+
+<button class="menu-toggle" id="menuToggle" aria-label="Toggle navigation">
+  <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+</button>
+
+<div class="layout">
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-brand">
+    <div class="logo">
+      <div class="logo-mark">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M12 2l8 4v6c0 5-3.5 8-8 10-4.5-2-8-5-8-10V6l8-4z"/><path d="M9 12l2 2 4-4"/></svg>
+      </div>
+      <div>
+        <div class="logo-txt">SUPPLY CHAIN ASSURANCE</div>
+        <div class="logo-sub">Security Architecture</div>
+      </div>
+    </div>
+    <div class="doc-title">Third-Party Software Supply Chain Governance Framework</div>
+  </div>
+  <nav class="nav" id="nav">
+    <div class="nav-group-label">Front Matter</div>
+    <a href="#exec"><span class="num">00</span>Executive Summary</a>
+    <a href="#contents"><span class="num">&mdash;</span>Document Contents</a>
+
+    <div class="nav-group-label">Part I &middot; The Problem</div>
+    <a href="#landscape"><span class="num">01</span>The Threat Landscape</a>
+    <a href="#vendor-problem"><span class="num">02</span>The Vendor Claim Problem</a>
+
+    <div class="nav-group-label">Part II &middot; The Framework</div>
+    <a href="#framework"><span class="num">03</span>Governance Framework</a>
+    <a href="#onboarding"><span class="num">04</span>Vendor Onboarding</a>
+    <a href="#approval"><span class="num">05</span>Approval Workflow</a>
+    <a href="#repo-gov"><span class="num">06</span>Repository Governance</a>
+
+    <div class="nav-group-label">Part III &middot; Trust &amp; Evidence</div>
+    <a href="#image-trust"><span class="num">07</span>Image Trust &amp; Signing</a>
+    <a href="#provenance"><span class="num">08</span>Provenance &amp; SLSA</a>
+    <a href="#sbom"><span class="num">09</span>SBOM (One Component)</a>
+    <a href="#vex"><span class="num">10</span>VEX &amp; Vuln Context</a>
+
+    <div class="nav-group-label">Part IV &middot; Validating Vendors</div>
+    <a href="#validate-claims"><span class="num">11</span>Validating Vendor Claims</a>
+    <a href="#reachability"><span class="num">12</span>Reachability &amp; Runtime</a>
+    <a href="#runtime-mon"><span class="num">13</span>Runtime Monitoring</a>
+
+    <div class="nav-group-label">Part V &middot; Governance Ops</div>
+    <a href="#license"><span class="num">14</span>License Governance</a>
+    <a href="#pac"><span class="num">15</span>Policy as Code</a>
+    <a href="#risk-accept"><span class="num">16</span>Risk &amp; Exceptions</a>
+    <a href="#continuous"><span class="num">17</span>Continuous Compliance</a>
+
+    <div class="nav-group-label">Part VI &middot; Reference</div>
+    <a href="#architecture"><span class="num">18</span>Reference Architecture</a>
+    <a href="#industry"><span class="num">19</span>Industry Practices</a>
+    <a href="#recommendations"><span class="num">20</span>Recommendations</a>
+    <a href="#appendix"><span class="num">A</span>Appendices &amp; Glossary</a>
+    <a href="#references"><span class="num">R</span>References</a>
+  </nav>
+</aside>
+
+<main class="main">
+<header class="cover">
+  <div class="cover-inner">
+    <span class="eyebrow">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#7fd0e6" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+      Enterprise Security Architecture &middot; Customer Deliverable
+    </span>
+    <h1>Third-Party Software Supply Chain Governance Framework</h1>
+    <p class="lede">A practitioner's framework for validating third-party software, verifying vendor security claims without access to source code, and governing trust across a Red&nbsp;Hat OpenShift platform &mdash; from vendor onboarding to runtime assurance.</p>
+    <div class="cover-tags">
+      <span>Red Hat OpenShift</span>
+      <span>Sonatype Nexus &amp; Repository Firewall</span>
+      <span>Prisma Cloud</span>
+      <span>Trivy</span>
+      <span>HashiCorp Vault</span>
+      <span>Cosign / Sigstore</span>
+      <span>SLSA &middot; in-toto</span>
+      <span>CycloneDX &middot; SPDX &middot; VEX</span>
+    </div>
+    <div class="cover-meta">
+      <div><span class="k">Prepared For</span><span class="v">Security Architects, DevSecOps &amp; Platform Engineers, Enterprise Architects, Risk &amp; Compliance, Executive Leadership</span></div>
+      <div><span class="k">Classification</span><span class="v">Confidential &mdash; Customer Deliverable</span></div>
+      <div><span class="k">Document Type</span><span class="v">Governance Framework &amp; Reference Architecture</span></div>
+      <div><span class="k">Status</span><span class="v">For Review &amp; Adoption</span></div>
+    </div>
+  </div>
+</header>
+
+<div class="content">
+<!-- ================= EXECUTIVE SUMMARY ================= -->
+<section class="section" id="exec">
+  <span class="section-tag">Section 00 &middot; For Executive Leadership</span>
+  <h2>Executive Summary</h2>
+  <p class="lead">Software is no longer something an enterprise only writes. It is something an enterprise <em>receives</em> &mdash; as container images, libraries, base layers, and agents delivered by third-party vendors whose source code we will never see. The central governance question is no longer "is our code secure?" but "<strong>can we trust what was handed to us, and can we prove it?</strong>"</p>
+
+  <p>This document presents a complete <strong>Third-Party Software Supply Chain Governance Framework</strong> for an environment built on Red&nbsp;Hat OpenShift, Sonatype Nexus Repository, Sonatype (Nexus) Repository Firewall, Prisma Cloud, Trivy, HashiCorp Vault, and Git-based CI/CD, where a material portion of running software arrives as third-party vendor container images pulled into private registries.</p>
+
+  <p>It is deliberately broader than SBOM generation. A Software Bill of Materials answers <em>"what is inside?"</em> &mdash; an essential question, but only one of seven the enterprise must answer. The framework treats the SBOM as a single evidence artifact within a larger trust system that also covers provenance, signing, vulnerability context (VEX), reachability, runtime exploitability, and continuous monitoring.</p>
+
+  <div class="grid cols-3">
+    <div class="card accent">
+      <div class="icon"><svg viewBox="0 0 24 24"><path d="M21 12a9 9 0 11-6.2-8.5" stroke-linecap="round"/><path d="M22 4l-10 10-3-3" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <h4>The Core Problem</h4>
+      <p>When a scanner finds a critical CVE in a vendor image, the vendor often replies "false positive" or "not exploitable." Without source code, the enterprise cannot naively accept &mdash; or naively reject &mdash; that claim. It must <strong>verify</strong> it.</p>
+    </div>
+    <div class="card accent">
+      <div class="icon"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 9h6v6H9z"/></svg></div>
+      <h4>The Approach</h4>
+      <p>Replace trust-by-assertion with <strong>trust-by-evidence</strong>: signed provenance, attestations, machine-readable VEX, reachability analysis, and runtime telemetry &mdash; each with documented limitations and a defined fallback.</p>
+    </div>
+    <div class="card accent">
+      <div class="icon"><svg viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M7 14l4-4 3 3 5-6" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <h4>The Outcome</h4>
+      <p>A defensible, auditable decision for every third-party artifact: <strong>admit, admit-with-exception, or reject</strong> &mdash; governed by policy-as-code, recorded in immutable audit trails, and monitored continuously after deployment.</p>
+    </div>
+  </div>
+
+  <h3>The Seven Business Questions This Framework Answers</h3>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th style="width:34%">Business Question</th><th>How the Framework Answers It</th><th style="width:22%">Primary Section</th></tr></thead>
+      <tbody>
+        <tr><td><strong>How do we validate third-party software?</strong></td><td>A multi-gate pipeline: identity &amp; signature verification, provenance/attestation checks, SBOM ingestion, scanning (Trivy + Prisma Cloud), VEX reconciliation, and policy-as-code admission control before anything runs on OpenShift.</td><td><a href="#approval">05</a>, <a href="#repo-gov">06</a>, <a href="#image-trust">07</a>, <a href="#architecture">18</a></td></tr>
+        <tr><td><strong>How do we verify vendor responses?</strong></td><td>Evidence hierarchy: vendor assertions are accepted only when backed by signed VEX, reachability analysis, provenance, and corroborating runtime telemetry &mdash; cross-checked against independent scanner output.</td><td><a href="#validate-claims">11</a></td></tr>
+        <tr><td><strong>What evidence should be required?</strong></td><td>A tiered evidence matrix tied to vendor criticality and data sensitivity, from signature + SBOM at the floor to signed SLSA provenance + VEX + reachability for business-critical workloads.</td><td><a href="#onboarding">04</a>, <a href="#validate-claims">11</a>, <a href="#appendix">Appendix&nbsp;B</a></td></tr>
+        <tr><td><strong>How is risk acceptance managed?</strong></td><td>Formal exception workflow with risk scoring, compensating controls, time-boxed expiry, named accountable owner, and governance-board approval recorded in an audit trail.</td><td><a href="#risk-accept">16</a></td></tr>
+        <tr><td><strong>When is an image rejected?</strong></td><td>Deterministic rejection criteria: malware, invalid/absent signature, failed provenance, unresolved critical with no credible VEX, prohibited license, or expired exception.</td><td><a href="#repo-gov">06</a>, <a href="#risk-accept">16</a>, <a href="#appendix">Appendix&nbsp;A</a></td></tr>
+        <tr><td><strong>When can an exception be approved?</strong></td><td>When residual risk is understood, compensating controls exist, exposure is time-boxed, and an accountable owner accepts it at the right authority level.</td><td><a href="#risk-accept">16</a></td></tr>
+        <tr><td><strong>How is software monitored after deployment?</strong></td><td>Continuous re-scanning of registry contents, VEX/advisory feeds, runtime exploitability via eBPF, drift detection, and SBOM-driven impact analysis for newly disclosed CVEs.</td><td><a href="#runtime-mon">13</a>, <a href="#continuous">17</a></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="callout key">
+    <div class="ct">Guiding Principle</div>
+    <p>A vendor's claim is a <strong>hypothesis</strong>, not a conclusion. "We don't use that package," "it's a false positive," and "the code isn't reachable" are testable statements. This framework defines exactly how to test each one with the evidence and tooling available to an organization that does not own the source.</p>
+  </div>
+
+  <h3>What Decision-Makers Should Take Away</h3>
+  <ul class="check">
+    <li><strong>Shift the burden of proof to the vendor.</strong> Make signed provenance, SBOM, and VEX contractual deliverables at onboarding, not after-the-fact requests during an incident.</li>
+    <li><strong>Never accept "false positive" verbally.</strong> Require it as a signed, machine-readable VEX statement with a justification the enterprise can independently corroborate.</li>
+    <li><strong>Verify, don't trust, at the registry boundary.</strong> The Repository Firewall and OpenShift admission control are the enforcement points where policy becomes reality.</li>
+    <li><strong>Treat runtime as the final arbiter.</strong> When static evidence is inconclusive, eBPF runtime telemetry shows whether vulnerable code actually loads and executes.</li>
+    <li><strong>Make every decision auditable.</strong> Regulators, including insurance supervisors, increasingly expect demonstrable third-party software due diligence, not just policy statements.</li>
+  </ul>
+</section>
+
+<!-- ================= CONTENTS ================= -->
+<section class="section" id="contents">
+  <span class="section-tag">Navigation</span>
+  <h2>Document Contents</h2>
+  <p class="lead">The framework is organized into six parts, moving from the nature of the problem through the trust model, vendor validation, governance operations, and a concrete reference architecture mapped to the customer's tooling.</p>
+
+  <div class="grid cols-2">
+    <div>
+      <div class="toc-section">
+        <a href="#landscape"><span class="tnum">01</span>The Third-Party Software Threat Landscape</a>
+        <a href="#vendor-problem"><span class="tnum">02</span>The Vendor Claim Problem &amp; Trust Gap</a>
+        <a href="#framework"><span class="tnum">03</span>The Governance Framework Overview</a>
+        <a href="#onboarding"><span class="tnum">04</span>Vendor Onboarding &amp; Tiering</a>
+        <a href="#approval"><span class="tnum">05</span>Software Approval Workflow</a>
+        <a href="#repo-gov"><span class="tnum">06</span>Repository &amp; Firewall Governance</a>
+        <a href="#image-trust"><span class="tnum">07</span>Image Trust, Signatures &amp; Cosign</a>
+        <a href="#provenance"><span class="tnum">08</span>Provenance, SLSA &amp; in-toto</a>
+        <a href="#sbom"><span class="tnum">09</span>SBOM: CycloneDX &amp; SPDX</a>
+        <a href="#vex"><span class="tnum">10</span>VEX &amp; Vulnerability Context</a>
+      </div>
+    </div>
+    <div>
+      <div class="toc-section">
+        <a href="#validate-claims"><span class="tnum">11</span>How Enterprises Validate Vendor Claims</a>
+        <a href="#reachability"><span class="tnum">12</span>Reachability &amp; Runtime Exploitability</a>
+        <a href="#runtime-mon"><span class="tnum">13</span>Runtime Monitoring &amp; Drift Detection</a>
+        <a href="#license"><span class="tnum">14</span>License Governance</a>
+        <a href="#pac"><span class="tnum">15</span>Policy as Code</a>
+        <a href="#risk-accept"><span class="tnum">16</span>Risk Acceptance &amp; Exception Management</a>
+        <a href="#continuous"><span class="tnum">17</span>Continuous Compliance &amp; Audit</a>
+        <a href="#architecture"><span class="tnum">18</span>Reference Architecture</a>
+        <a href="#industry"><span class="tnum">19</span>How Leading Organizations Approach This</a>
+        <a href="#recommendations"><span class="tnum">20</span>Consultant Recommendations &amp; Roadmap</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout illustrative">
+    <div class="ct">A Note on Evidence &amp; Attribution</div>
+    <p>Every technical claim, incident description, and standard referenced in this document is drawn from publicly available primary sources, which are cited in <a href="#references">Section R: References</a>. Where an implementation pattern is shown to illustrate how an enterprise <em>might</em> apply a control &mdash; rather than a publicly documented fact about a named company &mdash; it is explicitly labelled <strong>"Illustrative enterprise example."</strong> Named-company practices (Google, Microsoft, Red Hat, and others) are described only to the extent they are publicly documented.</p>
+  </div>
+</section>
+<!-- ================= 01 LANDSCAPE ================= -->
+<section class="section" id="landscape">
+  <span class="section-tag red">Part I &middot; The Problem</span>
+  <h2>01 &middot; The Third-Party Software Threat Landscape</h2>
+  <p class="lead">The last seven years turned software supply chain attacks from a theoretical concern into the dominant enterprise breach vector. The pattern is consistent: attackers no longer breach the target directly &mdash; they compromise something the target <em>trusts and installs</em>.</p>
+
+  <p>For an insurance enterprise consuming third-party container images, this matters because the attack does not arrive through the firewall. It arrives through the registry, signed and apparently legitimate, inside an image a vendor delivered and an engineer pulled. The defining incidents below are not anecdotes; each one maps directly to a control in this framework.</p>
+
+  <h3>Anatomy of a Supply Chain Attack Surface</h3>
+  <div class="diagram">
+    <div class="mermaid">
+flowchart LR
+    subgraph SRC["Source"]
+      A1["Developer<br/>credentials"]
+      A2["Source repo /<br/>dependencies"]
+    end
+    subgraph BUILD["Build &amp; CI/CD"]
+      B1["Build system"]
+      B2["CI secrets /<br/>tokens"]
+      B3["Build tooling"]
+    end
+    subgraph DIST["Distribution"]
+      C1["Package registry"]
+      C2["Update channel"]
+      C3["Signing keys"]
+    end
+    subgraph CONSUME["Consumption"]
+      D1["Private registry"]
+      D2["Runtime /<br/>OpenShift"]
+    end
+    A2 -->|"event-stream<br/>XZ Utils"| B1
+    A1 -->|"CircleCI"| B2
+    B1 -->|"SolarWinds<br/>3CX"| C2
+    B3 -->|"Codecov"| B2
+    C3 -->|"stolen cert"| C2
+    C2 --> D1 --> D2
+    classDef src fill:#15375f,stroke:#0b1f38,color:#fff;
+    classDef bld fill:#2b577f,stroke:#0b1f38,color:#fff;
+    classDef dist fill:#cc1f2d,stroke:#8e1420,color:#fff;
+    classDef cons fill:#1f9d6b,stroke:#0b5a3c,color:#fff;
+    class A1,A2 src;
+    class B1,B2,B3 bld;
+    class C1,C2,C3 dist;
+    class D1,D2 cons;
+    </div>
+    <div class="fig-cap"><span class="fig-num">Figure 1.1</span> &mdash; Where landmark attacks struck the supply chain. Compromise at any upstream link is inherited by every downstream consumer.</div>
+  </div>
+
+  <h3>Defining Incidents &mdash; and What Each One Teaches</h3>
+  <p>The following incidents are documented from primary and authoritative public sources. The "control lesson" column is the bridge from history to the framework that follows.</p>
+
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Incident</th><th>What Happened (publicly documented)</th><th>Control Lesson</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>SolarWinds / SUNBURST</strong><br><span class="pill info">2020</span></td>
+          <td>Attackers (attributed by FireEye to UNC2452) trojanized the SolarWinds Orion <em>build process</em>, inserting the SUNBURST backdoor into legitimately <strong>signed</strong> software updates distributed to roughly 18,000 customers.</td>
+          <td>A valid digital signature proves <em>who shipped it</em>, not <em>that the build was clean</em>. <strong>Build integrity and provenance (SLSA)</strong> are required, not just signing.</td>
+        </tr>
+        <tr>
+          <td><strong>Log4Shell (CVE-2021-44228)</strong><br><span class="pill crit">CVSS 10.0</span></td>
+          <td>An unauthenticated RCE in Apache Log4j 2: a crafted string such as <code>${jndi:ldap://&hellip;}</code> in a logged value caused the library to fetch and execute remote code. Buried as a transitive dependency in thousands of products.</td>
+          <td>You cannot remediate what you cannot find. <strong>SBOMs + dependency inventory</strong> are prerequisites for answering "are we affected, and where?"</td>
+        </tr>
+        <tr>
+          <td><strong>XZ Utils Backdoor (CVE-2024-3094)</strong><br><span class="pill crit">2024</span></td>
+          <td>A multi-year social-engineering operation planted an obfuscated backdoor in the <code>liblzma</code> build of XZ Utils 5.6.0/5.6.1, enabling SSH auth bypass. Discovered by a Microsoft engineer investigating a ~500&nbsp;ms SSH latency anomaly &mdash; not by a scanner.</td>
+          <td>Malicious code can be invisible to signatures and SBOMs. <strong>Build reproducibility, behavioral/runtime monitoring, and dependency-maintainer trust</strong> matter.</td>
+        </tr>
+        <tr>
+          <td><strong>3CX (cascading)</strong><br><span class="pill info">2023</span></td>
+          <td>A double supply chain compromise: a 3CX employee installed a trojanized X_TRADER app; attackers (suspected DPRK-nexus) pivoted into 3CX's build environment and shipped a malicious, signed 3CX DesktopApp to customers.</td>
+          <td>Vendor trust is transitive. Your vendor's vendors are <em>your</em> risk. <strong>Vendor onboarding must assess the vendor's own supply chain hygiene.</strong></td>
+        </tr>
+        <tr>
+          <td><strong>Codecov Bash Uploader</strong><br><span class="pill info">2021</span></td>
+          <td>Attackers modified the Bash Uploader script (via credentials extracted from a Docker image) to exfiltrate CI environment variables &mdash; tokens, keys, credentials &mdash; undetected for roughly two months. Detected by a customer noticing a SHA-256 mismatch.</td>
+          <td><strong>Integrity verification (checksums/signatures) of build tooling</strong> and secret hygiene in CI are essential. Trust the hash, not the URL.</td>
+        </tr>
+        <tr>
+          <td><strong>CircleCI</strong><br><span class="pill info">2023</span></td>
+          <td>Malware on an engineer's laptop stole a post-2FA session cookie, letting attackers impersonate the user and exfiltrate customer secrets (including AWS keys and OAuth tokens). CircleCI told all customers to rotate every stored secret.</td>
+          <td>CI/CD platforms are high-value targets. <strong>Short-lived credentials, secret rotation, and Vault-backed dynamic secrets</strong> limit blast radius.</td>
+        </tr>
+        <tr>
+          <td><strong>npm event-stream</strong><br><span class="pill info">2018</span></td>
+          <td>A new maintainer added a malicious dependency (<code>flatmap-stream</code>) to the popular <code>event-stream</code> package; the payload specifically targeted the Copay bitcoin wallet's build environment and was downloaded millions of times.</td>
+          <td>Maintainer handoff is an attack vector. <strong>Repository Firewall policies on package age, provenance, and behavior</strong> catch what reputation alone misses.</td>
+        </tr>
+      </tbody>
+    </table>
+    <caption style="display:block;font-size:.78rem;color:var(--muted);padding:10px 4px">Sources: FireEye/Mandiant &amp; Google Cloud Threat Intelligence, NIST NVD, Apache Software Foundation, Codecov post-mortem, CircleCI incident report, npm security advisory. See Section R.</caption>
+  </div>
+
+  <div class="grid cols-4">
+    <div class="card red"><div class="big-num">~18k</div><div class="stat-label">Organizations that received the trojanized SolarWinds Orion update (publicly reported).</div></div>
+    <div class="card amber"><div class="big-num">10.0</div><div class="stat-label">CVSS base score of Log4Shell &mdash; the maximum on the scale (NVD).</div></div>
+    <div class="card red"><div class="big-num">~2 mo</div><div class="stat-label">Time the Codecov backdoor went undetected (Jan&ndash;Apr 2021).</div></div>
+    <div class="card accent"><div class="big-num">500ms</div><div class="stat-label">SSH latency anomaly that led to discovery of the XZ backdoor.</div></div>
+  </div>
+
+  <div class="callout danger">
+    <div class="ct">The Uncomfortable Truth</div>
+    <p>In SolarWinds, 3CX, and XZ Utils, the malicious artifact was <strong>correctly signed and passed conventional checks</strong>. Signature verification, SBOMs, and CVE scanning are necessary but <em>not sufficient</em>. A mature program assumes the artifact may be compromised <em>even when the paperwork is perfect</em>, and adds provenance, reproducibility, behavioral analysis, and runtime monitoring as independent lines of defense.</p>
+  </div>
+</section>
+
+<!-- ================= 02 VENDOR CLAIM PROBLEM ================= -->
+<section class="section" id="vendor-problem">
+  <span class="section-tag red">Part I &middot; The Problem</span>
+  <h2>02 &middot; The Vendor Claim Problem &amp; The Trust Gap</h2>
+  <p class="lead">The customer's most acute concern is not the initial scan finding &mdash; it is what happens next. A scanner flags a critical CVE in a vendor image, and the conversation that follows is where most enterprises lose control of their own risk posture.</p>
+
+  <h3>The Conversation Every Enterprise Has Had</h3>
+  <div class="diagram">
+    <div class="mermaid">
+sequenceDiagram
+    autonumber
+    participant V as Third-Party Vendor
+    participant E as Enterprise (You)
+    participant S as Prisma Cloud / Trivy
+    V->>E: Delivers container image
+    E->>S: Import to Nexus Firewall &amp; scan
+    S-->>E: CRITICAL CVE detected
+    E->>V: We found CVE-XXXX-NNNNN (Critical)
+    Note over V,E: The five classic deflections
+    V-->>E: "We don't use that package"
+    V-->>E: "That's a false positive"
+    V-->>E: "The package exists but isn't executed"
+    V-->>E: "The vulnerable code isn't reachable"
+    V-->>E: "This CVE doesn't affect our implementation"
+    Note over E: No source code = cannot independently verify
+    E->>E: Accept blindly? Reject blindly? Neither is governance.
+    </div>
+    <div class="fig-cap"><span class="fig-num">Figure 2.1</span> &mdash; The trust gap: the moment a verbal vendor assertion meets an enterprise that cannot see the source.</div>
+  </div>
+
+  <h3>Why "Just Trust the Vendor" and "Just Reject Everything" Both Fail</h3>
+  <div class="grid cols-2">
+    <div class="card red">
+      <h4>Blind acceptance</h4>
+      <ul class="cross">
+        <li>Transfers the vendor's risk appetite onto your balance sheet.</li>
+        <li>Leaves no audit trail a regulator or insurer will accept.</li>
+        <li>Was the exact failure mode in SolarWinds and 3CX &mdash; "it's signed, it's fine."</li>
+        <li>Creates unmonitored, undocumented residual risk in production.</li>
+      </ul>
+    </div>
+    <div class="card amber">
+      <h4>Blind rejection</h4>
+      <ul class="cross">
+        <li>Most flagged CVEs genuinely <em>are</em> non-exploitable in context &mdash; rejecting everything is operationally impossible.</li>
+        <li>Drives teams to disable scanning or route around governance ("shadow registries").</li>
+        <li>Destroys the vendor relationship and delivery timelines without reducing real risk.</li>
+        <li>Wastes scarce security capacity on noise instead of genuine exposure.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="callout key">
+    <div class="ct">The Reframe</div>
+    <p>The goal is not to decide whether to <em>believe</em> the vendor. The goal is to <strong>convert each vendor claim into a verifiable evidence requirement</strong>. "It's a false positive" becomes "provide a signed VEX statement with a CSAF/OpenVEX justification we can corroborate." "The code isn't reachable" becomes "demonstrate it via reachability analysis, and we will confirm with runtime telemetry." This is the subject of <a href="#validate-claims">Section 11</a>.</p>
+  </div>
+
+  <h3>The Five Claims, Mapped to Verifiable Evidence</h3>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Vendor Claim</th><th>What It Really Asserts</th><th>Evidence That Verifies It</th></tr></thead>
+      <tbody>
+        <tr><td>"We don't use that package"</td><td>The component is not present in the shipped artifact.</td><td>Vendor SBOM + independent SBOM regeneration (Trivy/Syft) from the image; binary composition analysis.</td></tr>
+        <tr><td>"It's a false positive"</td><td>The scanner mis-identified the component or version.</td><td>Component coordinates (PURL) + hash reconciliation; signed VEX with <code>component_not_present</code> or version evidence.</td></tr>
+        <tr><td>"The package exists but isn't executed"</td><td>Code is present but never loaded/invoked.</td><td>VEX <code>vulnerable_code_not_in_execute_path</code> + reachability analysis + eBPF runtime confirmation of loaded modules.</td></tr>
+        <tr><td>"The vulnerable code isn't reachable"</td><td>No call path reaches the vulnerable function.</td><td>Static reachability (call-graph) analysis; runtime function-level telemetry over a representative window.</td></tr>
+        <tr><td>"This CVE doesn't affect our implementation"</td><td>Configuration/usage neutralizes the flaw.</td><td>Signed VEX with <code>inline_mitigations_already_exist</code> + vendor security advisory + config attestation; validated by your own config inspection.</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>Each row is a contract: the enterprise specifies the evidence it will accept, and the vendor's willingness (or refusal) to provide it becomes a risk signal in its own right.</p>
+</section>
+<!-- ================= 03 FRAMEWORK ================= -->
+<section class="section" id="framework">
+  <span class="section-tag">Part II &middot; The Framework</span>
+  <h2>03 &middot; The Governance Framework Overview</h2>
+  <p class="lead">The framework is a layered trust model. Each layer answers a distinct question, and an artifact must clear every applicable layer before it is permitted to run. No single layer &mdash; not even the SBOM &mdash; is treated as sufficient on its own.</p>
+
+  <h3>The Seven Layers of Supply Chain Assurance</h3>
+  <div class="diagram">
+    <div class="mermaid">
+flowchart TB
+    L1["<b>1 &middot; Identity &amp; Authenticity</b><br/>Who produced this? &mdash; Cosign / Sigstore / Notary v2 signatures"]
+    L2["<b>2 &middot; Provenance &amp; Integrity</b><br/>How was it built? &mdash; SLSA, in-toto attestations"]
+    L3["<b>3 &middot; Composition</b><br/>What is inside? &mdash; SBOM: CycloneDX / SPDX"]
+    L4["<b>4 &middot; Vulnerability Context</b><br/>What is exploitable? &mdash; Trivy + Prisma Cloud + VEX"]
+    L5["<b>5 &middot; Reachability &amp; Exploitability</b><br/>Can it actually be triggered? &mdash; call-graph + runtime"]
+    L6["<b>6 &middot; Policy &amp; Admission</b><br/>Are we allowed to run it? &mdash; Policy-as-Code, OpenShift gates"]
+    L7["<b>7 &middot; Continuous Assurance</b><br/>Is it still safe? &mdash; re-scan, drift, eBPF, audit"]
+    L1 --> L2 --> L3 --> L4 --> L5 --> L6 --> L7
+    L7 -.->|"new CVE / advisory<br/>feedback loop"| L4
+    classDef a fill:#15375f,stroke:#0b1f38,color:#fff;
+    classDef b fill:#1f8fb3,stroke:#0b1f38,color:#fff;
+    classDef c fill:#1f9d6b,stroke:#0b5a3c,color:#fff;
+    class L1,L2 a;
+    class L3,L4,L5 b;
+    class L6,L7 c;
+    </div>
+    <div class="fig-cap"><span class="fig-num">Figure 3.1</span> &mdash; The seven-layer assurance model. The SBOM (Layer 3) is one layer of seven, deliberately sandwiched between provenance and vulnerability context.</div>
+  </div>
+
+  <h3>Mapping Layers to the Customer's Toolchain</h3>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Layer</th><th>Question Answered</th><th>Primary Tooling (customer stack)</th><th>Enforcement Point</th></tr></thead>
+      <tbody>
+        <tr><td><strong>1. Identity</strong></td><td>Did a trusted party produce this exact artifact?</td><td>Cosign / Sigstore; Notary v2 (notation); keys in HashiCorp Vault</td><td>Registry &amp; OpenShift admission</td></tr>
+        <tr><td><strong>2. Provenance</strong></td><td>Was it built by a trusted, tamper-resistant process?</td><td>SLSA provenance, in-toto attestations (verified with Cosign)</td><td>CI/CD &amp; admission</td></tr>
+        <tr><td><strong>3. Composition</strong></td><td>What components and licenses are inside?</td><td>Trivy / Syft (SBOM gen), CycloneDX &amp; SPDX, Nexus</td><td>Build &amp; registry</td></tr>
+        <tr><td><strong>4. Vuln Context</strong></td><td>Which known vulnerabilities apply?</td><td>Trivy, Prisma Cloud, Nexus (Repository) Firewall, VEX</td><td>Registry Firewall</td></tr>
+        <tr><td><strong>5. Reachability</strong></td><td>Is the vulnerable code actually exploitable here?</td><td>Reachability analysis tooling; Prisma Cloud runtime; eBPF (Falco/Tetragon)</td><td>Pre-prod &amp; runtime</td></tr>
+        <tr><td><strong>6. Policy</strong></td><td>Does this satisfy enterprise policy?</td><td>Policy-as-Code (OPA/Gatekeeper, Kyverno), Prisma Cloud policies</td><td>OpenShift admission webhook</td></tr>
+        <tr><td><strong>7. Continuous</strong></td><td>Is it still trustworthy in production?</td><td>Prisma Cloud runtime defense, eBPF, Nexus re-evaluation, SIEM</td><td>Runtime &amp; audit</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="callout rec">
+    <div class="ct">Consultant Recommendation</div>
+    <p>Adopt the layers <strong>incrementally but in order of leverage</strong>. Most organizations already have Layers 3&ndash;4 (SBOM + scanning). The highest marginal risk reduction for a vendor-image-heavy estate comes from adding <strong>Layer 1 (mandatory signature verification at admission)</strong> and <strong>Layer 2 (provenance)</strong> &mdash; precisely the layers that would have changed the outcome in SolarWinds and 3CX. Treat Layer 5 (reachability/runtime) as the tie-breaker for disputed vendor claims rather than a universal gate.</p>
+  </div>
+</section>
+
+<!-- ================= 04 ONBOARDING ================= -->
+<section class="section" id="onboarding">
+  <span class="section-tag">Part II &middot; The Framework</span>
+  <h2>04 &middot; Vendor Onboarding &amp; Tiering</h2>
+  <p class="lead">Governance fails when evidence is requested reactively, mid-incident. The single highest-leverage intervention is to make supply chain evidence a <strong>contractual onboarding deliverable</strong>, scaled to how much trust the vendor's software will be granted.</p>
+
+  <h3>Risk-Based Vendor Tiering</h3>
+  <p>Not every vendor warrants the same scrutiny. Tier the vendor by the blast radius of its software, then attach evidence requirements to the tier. This keeps governance proportional and defensible.</p>
+
+  <div class="grid cols-3">
+    <div class="card red">
+      <h4>Tier 1 &mdash; Critical</h4>
+      <p style="font-size:.9rem;color:var(--muted)">Handles PII/PHI/policyholder or claims data, runs with elevated privilege, or is internet-facing.</p>
+      <ul class="check" style="font-size:.86rem">
+        <li>Signed images (mandatory)</li>
+        <li>SLSA provenance (Build L3 target)</li>
+        <li>SBOM (CycloneDX or SPDX) per release</li>
+        <li>VEX for all critical/high findings</li>
+        <li>Security advisory feed / PSIRT contact</li>
+        <li>Right-to-audit clause</li>
+      </ul>
+    </div>
+    <div class="card amber">
+      <h4>Tier 2 &mdash; Important</h4>
+      <p style="font-size:.9rem;color:var(--muted)">Internal business systems, limited data scope, no direct internet exposure.</p>
+      <ul class="check" style="font-size:.86rem">
+        <li>Signed images (mandatory)</li>
+        <li>SBOM per release</li>
+        <li>VEX for critical findings</li>
+        <li>Provenance (Build L2 target)</li>
+        <li>Defined remediation SLAs</li>
+      </ul>
+    </div>
+    <div class="card green">
+      <h4>Tier 3 &mdash; Standard</h4>
+      <p style="font-size:.9rem;color:var(--muted)">Non-sensitive, sandboxed, or developer-tooling images with minimal reach.</p>
+      <ul class="check" style="font-size:.86rem">
+        <li>Signed images (preferred)</li>
+        <li>SBOM on request</li>
+        <li>Standard scanning gates</li>
+        <li>Best-effort remediation</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="callout warn">
+    <div class="ct">Lesson from 3CX</div>
+    <p>The 3CX compromise originated in <em>another</em> vendor's trojanized software. Tier&nbsp;1 onboarding should therefore assess the vendor's <strong>own</strong> supply chain controls &mdash; do <em>they</em> sign, generate SBOMs, and verify their upstreams? Map this to a recognized baseline such as the NIST Secure Software Development Framework (SP&nbsp;800-218) and request the vendor's CISA Secure Software Development attestation where applicable.</p>
+  </div>
+
+  <h3>Onboarding Workflow</h3>
+  <ol class="steps">
+    <li><h4>Business sponsorship &amp; classification</h4><p>The requesting business unit declares the data sensitivity and exposure of the intended workload. This sets the vendor tier.</p></li>
+    <li><h4>Security due-diligence questionnaire</h4><p>Vendor completes an SSDF-aligned assessment: build security, signing, SBOM capability, vulnerability disclosure (PSIRT), and their own third-party governance.</p></li>
+    <li><h4>Evidence capability validation</h4><p>Confirm the vendor can actually deliver the tier's required artifacts (signature, provenance, SBOM, VEX) &mdash; ideally by validating a sample image before contract signature.</p></li>
+    <li><h4>Contractual codification</h4><p>Evidence deliverables, remediation SLAs, right-to-audit, and breach-notification timelines are written into the master agreement &mdash; not left to goodwill.</p></li>
+    <li><h4>Trust anchor establishment</h4><p>The vendor's signing identity (Cosign key / Fulcio OIDC identity / Notary v2 cert) is registered in the enterprise trust policy stored in Vault and referenced by admission control.</p></li>
+    <li><h4>Registry namespace provisioning</h4><p>A dedicated Nexus proxy/hosted repository and OpenShift namespace are created with policies bound to the vendor's tier.</p></li>
+  </ol>
+</section>
+
+<!-- ================= 05 APPROVAL WORKFLOW ================= -->
+<section class="section" id="approval">
+  <span class="section-tag">Part II &middot; The Framework</span>
+  <h2>05 &middot; Software Approval Workflow</h2>
+  <p class="lead">Once a vendor is onboarded, every individual image release runs through a deterministic approval pipeline. The outcome of that pipeline is always one of three states &mdash; <strong>Admit</strong>, <strong>Admit&nbsp;with&nbsp;Exception</strong>, or <strong>Reject</strong> &mdash; and every outcome is recorded.</p>
+
+  <div class="diagram">
+    <div class="mermaid">
+flowchart TD
+    START(["Vendor image arrives"]) --> SIG{"Signature &amp;<br/>identity valid?"}
+    SIG -->|No| REJ["REJECT<br/>quarantine + notify vendor"]
+    SIG -->|Yes| PROV{"Provenance /<br/>attestation valid?"}
+    PROV -->|No| REVW1["Hold for review"]
+    PROV -->|Yes| SBOMC{"SBOM present<br/>&amp; consistent?"}
+    REVW1 --> SBOMC
+    SBOMC -->|No| GEN["Generate SBOM<br/>independently (Trivy/Syft)"]
+    GEN --> SCAN
+    SBOMC -->|Yes| SCAN["Scan: Trivy +<br/>Prisma Cloud"]
+    SCAN --> FIND{"Critical / High<br/>findings?"}
+    FIND -->|None| ADMIT(["ADMIT<br/>sign + promote"])
+    FIND -->|Yes| VEXQ{"Credible VEX<br/>or fix available?"}
+    VEXQ -->|Fix available| PATCH["Require fixed version"]
+    VEXQ -->|Valid VEX,<br/>verified| REACH{"Reachability /<br/>runtime confirms<br/>not exploitable?"}
+    VEXQ -->|No evidence| EXC{"Exception<br/>justified?"}
+    REACH -->|Confirmed| ADMIT
+    REACH -->|Inconclusive| EXC
+    EXC -->|Approved by board| ADMITX(["ADMIT W/ EXCEPTION<br/>time-boxed + controls"])
+    EXC -->|Denied| REJ
+    classDef rej fill:#cc1f2d,stroke:#8e1420,color:#fff;
+    classDef adm fill:#1f9d6b,stroke:#0b5a3c,color:#fff;
+    classDef dec fill:#fff,stroke:#2b577f,color:#0b1f38;
+    class REJ rej;
+    class ADMIT,ADMITX adm;
+    </div>
+    <div class="fig-cap"><span class="fig-num">Figure 5.1</span> &mdash; The software approval decision flow. Every path terminates in a recorded, auditable outcome.</div>
+  </div>
+
+  <h3>Approval Gates &amp; Their Owners (RACI)</h3>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Gate</th><th>Decision</th><th>Accountable</th><th>Tooling</th></tr></thead>
+      <tbody>
+        <tr><td>G1 &mdash; Authenticity</td><td>Is the signature trusted?</td><td>Platform Engineering</td><td>Cosign verify, admission webhook</td></tr>
+        <tr><td>G2 &mdash; Provenance</td><td>Is the build trustworthy?</td><td>DevSecOps</td><td>SLSA verifier, in-toto</td></tr>
+        <tr><td>G3 &mdash; Composition</td><td>Is the SBOM complete &amp; consistent?</td><td>DevSecOps</td><td>Trivy, Syft, Nexus</td></tr>
+        <tr><td>G4 &mdash; Vulnerability</td><td>Are findings within policy?</td><td>Security Operations</td><td>Trivy, Prisma Cloud, Nexus Firewall</td></tr>
+        <tr><td>G5 &mdash; Exploitability</td><td>Is a flagged risk real in context?</td><td>Security Architecture</td><td>VEX, reachability, eBPF runtime</td></tr>
+        <tr><td>G6 &mdash; Risk acceptance</td><td>Approve exception?</td><td>Supply Chain Governance Board</td><td>Exception register, audit trail</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+<!-- ================= 06 REPO GOVERNANCE ================= -->
+<section class="section" id="repo-gov">
+  <span class="section-tag">Part II &middot; The Framework</span>
+  <h2>06 &middot; Repository &amp; Repository-Firewall Governance</h2>
+  <p class="lead">The private registry is the chokepoint where governance becomes enforceable. Everything an enterprise runs should be able to trace back to an artifact that passed through a governed Nexus repository &mdash; and nothing should reach a build or a cluster from an ungoverned public source.</p>
+
+  <h3>The Registry as a Trust Boundary</h3>
+  <p>Sonatype Nexus Repository acts as the system of record for binaries, container images, and packages. Sonatype Repository Firewall (formerly Nexus Firewall) sits in front of proxy repositories and evaluates every <em>inbound</em> component against policy before it is allowed into the local environment. When a requested component violates policy, the Firewall can place it into <strong>quarantine</strong>: it is not served to the requester while quarantined, and the requester receives an explanatory error linking to the component details.</p>
+
+  <div class="callout key">
+    <div class="ct">How Quarantine Works (per Sonatype documentation)</div>
+    <p>The Repository Firewall's <em>Audit and Quarantine</em> capability uses IQ Server policy to identify and, when configured, prevent a proxy repository from serving unwanted components. Quarantine must be <strong>enabled</strong> to block critical threats; by default, malicious components are quarantined and "should never be allowed in your repository." Disabling quarantine releases previously quarantined components, so enablement is a deliberate governance decision, not a default to assume.</p>
+  </div>
+
+  <h3>Recommended Repository Topology</h3>
+  <div class="diagram">
+    <div class="mermaid">
+flowchart LR
+    PUB[("Public sources<br/>Docker Hub, npm,<br/>Maven Central")]
+    subgraph NEXUS["Sonatype Nexus + Repository Firewall"]
+      FW{{"Repository Firewall<br/>policy evaluation"}}
+      QUAR["Quarantine<br/>(blocked)"]
+      PROXY["Proxy repos<br/>(governed cache)"]
+      HOSTED["Hosted repos<br/>vendor images,<br/>internal builds"]
+      STAGE["Staging /<br/>release repos"]
+    end
+    DEV["Developers /<br/>CI pipelines"]
+    OCP["OpenShift<br/>clusters"]
+    PUB --> FW
+    FW -->|"policy fail"| QUAR
+    FW -->|"policy pass"| PROXY
+    VENDOR["Third-party<br/>vendor images"] --> HOSTED
+    PROXY --> STAGE
+    HOSTED --> STAGE
+    STAGE --> DEV
+    STAGE --> OCP
+    classDef bad fill:#cc1f2d,stroke:#8e1420,color:#fff;
+    classDef good fill:#1f9d6b,stroke:#0b5a3c,color:#fff;
+    class QUAR bad;
+    class STAGE good;
+    </div>
+    <div class="fig-cap"><span class="fig-num">Figure 6.1</span> &mdash; Registry topology: all external components funnel through the Firewall; only staged, policy-passing artifacts reach developers and OpenShift.</div>
+  </div>
+
+  <h3>Recommended Repository Firewall Policy Set</h3>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Policy</th><th>Condition</th><th>Action</th><th>Rationale / Incident link</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Malicious component</strong></td><td>Component matches known-malware intelligence</td><td><span class="pill crit">Quarantine</span></td><td>Non-negotiable. Directly addresses npm-style malicious-package attacks.</td></tr>
+        <tr><td><strong>Critical CVE, no fix</strong></td><td>Critical vuln with no remediated version</td><td><span class="pill crit">Quarantine + review</span></td><td>Forces the VEX/reachability conversation before entry.</td></tr>
+        <tr><td><strong>Suspicious newness</strong></td><td>Package version published &lt; N days ago</td><td><span class="pill high">Warn / hold</span></td><td>Mitigates fast-moving malicious releases (event-stream pattern).</td></tr>
+        <tr><td><strong>Namespace / typosquat</strong></td><td>Name resembles a known popular package</td><td><span class="pill high">Quarantine</span></td><td>Defends against dependency-confusion &amp; typosquatting.</td></tr>
+        <tr><td><strong>Integrity mismatch</strong></td><td>Hash differs from expected/declared</td><td><span class="pill crit">Quarantine</span></td><td>Codecov lesson &mdash; trust the hash, not the source URL.</td></tr>
+        <tr><td><strong>Prohibited license</strong></td><td>License on enterprise deny-list</td><td><span class="pill med">Block / warn</span></td><td>License governance (14).</td></tr>
+        <tr><td><strong>Missing signature</strong></td><td>Tier&nbsp;1/2 image lacks valid signature</td><td><span class="pill high">Hold</span></td><td>Enforces Layer&nbsp;1 authenticity for sensitive workloads.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>Deterministic Rejection Criteria</h3>
+  <p>To remove ambiguity (and protect engineers from pressure to "just let it through"), the following are <strong>hard rejections</strong> with no exception path at the registry boundary:</p>
+  <ul class="cross">
+    <li>Confirmed malware or backdoor indicators.</li>
+    <li>Invalid, missing, or untrusted signature on a Tier&nbsp;1 image.</li>
+    <li>Failed or absent provenance where the vendor tier requires it.</li>
+    <li>Integrity/hash mismatch against the vendor-declared digest.</li>
+    <li>A prohibited (copyleft-incompatible or denied) license in a distributed artifact.</li>
+    <li>An expired security exception with no renewal.</li>
+  </ul>
+  <p>Everything else &mdash; notably a critical CVE that the vendor disputes &mdash; flows into the structured validation and exception process rather than an ad-hoc email thread.</p>
+</section>
+<!-- ================= 07 IMAGE TRUST ================= -->
+<section class="section" id="image-trust">
+  <span class="section-tag">Part III &middot; Trust &amp; Evidence</span>
+  <h2>07 &middot; Image Trust, Digital Signatures &amp; Cosign</h2>
+  <p class="lead">A signature answers one precise question: <em>did the holder of a trusted key (or identity) attest to this exact artifact by digest?</em> It does not prove the artifact is safe &mdash; SolarWinds was signed &mdash; but it is the foundation on which every other attestation is anchored.</p>
+
+  <h3>The Three Signing Approaches in This Estate</h3>
+  <div class="grid cols-3">
+    <div class="card accent">
+      <h4>Cosign / Sigstore</h4>
+      <p>Part of the Sigstore project. Signs OCI artifacts and stores the signature in the registry alongside the image. Supports both key-based and <strong>keyless</strong> signing.</p>
+      <p style="font-size:.86rem;color:var(--muted)">Keyless signing binds an <em>identity</em> rather than a long-lived key: Fulcio issues a short-lived certificate tied to an OIDC identity, and the signing event is recorded in the Rekor transparency log.</p>
+    </div>
+    <div class="card accent">
+      <h4>Notary v2 (notation)</h4>
+      <p>An OCI-native signing specification using X.509 certificates and registry-stored signatures. Aligns with traditional PKI / certificate-authority trust models familiar to enterprises.</p>
+      <p style="font-size:.86rem;color:var(--muted)">Harbor began deprecating the original Notary (v1 / Docker Content Trust) in v2.6; Cosign and Notary v2 are the forward-looking options.</p>
+    </div>
+    <div class="card accent">
+      <h4>Docker Content Trust (Notary v1)</h4>
+      <p>The legacy TUF-based approach. Functional but being superseded; treat as <strong>legacy</strong> and migrate toward Cosign or Notary v2.</p>
+      <p style="font-size:.86rem;color:var(--muted)">Listed here for completeness &mdash; not recommended for new Tier&nbsp;1 trust anchors.</p>
+    </div>
+  </div>
+
+  <h3>Keyed vs. Keyless: Choosing for an Insurance Enterprise</h3>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Dimension</th><th>Key-based (Cosign + KMS/Vault)</th><th>Keyless (Sigstore: Fulcio + Rekor)</th></tr></thead>
+      <tbody>
+        <tr><td>Trust anchor</td><td>Long-lived private key (store in HashiCorp Vault / KMS)</td><td>OIDC identity + short-lived cert; public transparency log</td></tr>
+        <tr><td>Key management burden</td><td>High &mdash; rotation, custody, HSM</td><td>Low &mdash; no long-lived key to protect</td></tr>
+        <tr><td>Air-gapped / on-prem fit</td><td>Strong &mdash; self-contained</td><td>Requires accessible Fulcio/Rekor (or self-hosted instances)</td></tr>
+        <tr><td>Auditability</td><td>Via internal logging</td><td>Strong &mdash; public/instance transparency log (Rekor)</td></tr>
+        <tr><td>Best fit here</td><td>Internal builds &amp; regulated on-prem signing with Vault custody</td><td>OSS/vendor verification &amp; CI identity-bound signing</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="callout rec">
+    <div class="ct">Recommendation</div>
+    <p>Use <strong>Cosign with keys custodied in HashiCorp Vault</strong> (or a Vault-backed KMS/transit engine) for internally produced and re-signed artifacts, giving the enterprise full control of the trust anchor. Verify <strong>vendor</strong> signatures against the specific identity registered at onboarding. Enforce verification at <em>both</em> the Nexus boundary and the OpenShift admission webhook &mdash; defense in depth, since a registry-only check can be bypassed by a direct cluster pull.</p>
+  </div>
+
+  <pre class="code"><span class="cm"># Verify a vendor image against the identity registered at onboarding</span>
+cosign verify <span class="st">registry.internal/vendor-x/app:1.4.2</span> \
+  --certificate-identity=<span class="st">"release@vendor-x.example"</span> \
+  --certificate-oidc-issuer=<span class="st">"https://token.actions.githubusercontent.com"</span>
+
+<span class="cm"># Key-based verification using a Vault-custodied public key</span>
+cosign verify --key <span class="st">hashivault://supply-chain/cosign-pub</span> \
+  <span class="st">registry.internal/internal/payments-api@sha256:...</span></pre>
+
+  <div class="callout warn">
+    <div class="ct">Limitation &mdash; What Signing Does NOT Prove</div>
+    <p>Signing proves <strong>integrity and origin</strong>, not <strong>safety</strong>. A compromised build pipeline (SolarWinds, 3CX) produces a perfectly valid signature over malicious content. This is precisely why Layer&nbsp;1 (signing) must be paired with Layer&nbsp;2 (provenance) &mdash; the subject of the next section.</p>
+  </div>
+</section>
+
+<!-- ================= 08 PROVENANCE / SLSA ================= -->
+<section class="section" id="provenance">
+  <span class="section-tag">Part III &middot; Trust &amp; Evidence</span>
+  <h2>08 &middot; Provenance, SLSA &amp; in-toto Attestations</h2>
+  <p class="lead">Provenance answers the question signatures cannot: <em>how, and by what process, was this artifact built?</em> It is the control that directly targets build-system compromise &mdash; the attack class behind SolarWinds, 3CX, and Codecov.</p>
+
+  <h3>SLSA &mdash; Supply-chain Levels for Software Artifacts</h3>
+  <p>SLSA is an industry-consensus framework, originally proposed by Google in collaboration with the OpenSSF, that defines incrementally adoptable levels of build integrity. The v1.0 release marked the first stable version; the specification has since continued to evolve (the project now publishes a v1.2 Build track). The Build track levels capture increasing protection against tampering of the build, the provenance, or the artifact.</p>
+
+  <div class="diagram">
+    <div class="mermaid">
+flowchart LR
+    L0["<b>Build L0</b><br/>No guarantees"] --> L1["<b>Build L1</b><br/>Provenance exists<br/>&amp; is available"]
+    L1 --> L2["<b>Build L2</b><br/>Signed provenance from<br/>a hosted build platform"]
+    L2 --> L3["<b>Build L3</b><br/>Hardened build platform;<br/>non-falsifiable provenance"]
+    classDef l0 fill:#9aa7b5,stroke:#5a6776,color:#fff;
+    classDef l1 fill:#2b577f,stroke:#0b1f38,color:#fff;
+    classDef l2 fill:#1f8fb3,stroke:#0b1f38,color:#fff;
+    classDef l3 fill:#1f9d6b,stroke:#0b5a3c,color:#fff;
+    class L0 l0;
+    class L1 l1;
+    class L2 l2;
+    class L3 l3;
+    </div>
+    <div class="fig-cap"><span class="fig-num">Figure 8.1</span> &mdash; The SLSA Build track. Higher levels provide stronger, harder-to-forge integrity guarantees. (Per slsa.dev; level definitions summarized.)</div>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Level</th><th>What it guarantees</th><th>Would it have helped against&hellip;</th></tr></thead>
+      <tbody>
+        <tr><td><span class="pill na">L0</span></td><td>Nothing &mdash; absence of SLSA.</td><td>&mdash;</td></tr>
+        <tr><td><span class="pill info">L1</span></td><td>Provenance exists describing how the artifact was built.</td><td>Basic transparency; catches naive tampering.</td></tr>
+        <tr><td><span class="pill med">L2</span></td><td>Provenance is signed and generated by a hosted build platform.</td><td>Raises the bar against casual provenance forgery.</td></tr>
+        <tr><td><span class="pill low">L3</span></td><td>Hardened build platform; provenance is non-falsifiable and resistant to insider/build tampering.</td><td><strong>SolarWinds-class build compromise</strong> &mdash; the target state for Tier&nbsp;1 vendors.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>in-toto Attestations &mdash; The Container for Evidence</h3>
+  <p>in-toto provides a standard, signed attestation format that binds a <em>predicate</em> (a statement about an artifact &mdash; its provenance, SBOM, test results, scan results) to a <em>subject</em> (the artifact, by digest). SLSA provenance is expressed as an in-toto predicate. Cosign can attach and verify these attestations against an image, giving a single mechanism to carry SBOM, provenance, and VEX as verifiable, signed evidence travelling <em>with</em> the artifact.</p>
+
+  <pre class="code"><span class="cm"># Attach a signed SLSA provenance attestation to an image</span>
+cosign attest --predicate <span class="st">provenance.json</span> \
+  --type <span class="st">slsaprovenance</span> --key <span class="st">hashivault://supply-chain/cosign-priv</span> \
+  <span class="st">registry.internal/internal/app@sha256:...</span>
+
+<span class="cm"># Verify provenance at admission time</span>
+cosign verify-attestation --type <span class="st">slsaprovenance</span> \
+  --certificate-identity=<span class="st">"build@internal"</span> ... <span class="st">image@sha256:...</span></pre>
+
+  <div class="callout warn">
+    <div class="ct">Limitations of Provenance</div>
+    <p>Provenance proves <strong>how</strong> something was built and that it was not altered afterward &mdash; it does <em>not</em> prove the <strong>inputs</strong> were benign. A backdoor introduced into source (XZ Utils) or a dependency (event-stream) yields entirely valid SLSA L3 provenance. Provenance must therefore be combined with composition analysis, dependency-trust controls, and runtime monitoring. For third-party images, you are typically <em>consuming</em> and <em>verifying</em> vendor provenance rather than producing it &mdash; so the practical control is requiring it contractually (Tier&nbsp;1) and verifying it at admission.</p>
+  </div>
+</section>
+
+<!-- ================= 09 SBOM ================= -->
+<section class="section" id="sbom">
+  <span class="section-tag">Part III &middot; Trust &amp; Evidence</span>
+  <h2>09 &middot; SBOM &mdash; One Component of the Framework</h2>
+  <p class="lead">The Software Bill of Materials is essential, but it is a <strong>parts list</strong>, not a safety certificate. It tells you <em>what is inside</em>. It does not tell you whether what is inside is exploitable, reachable, or even truthfully declared. This framework treats the SBOM as Layer&nbsp;3 of seven &mdash; necessary, foundational, and deliberately not sufficient.</p>
+
+  <p>EO 14028 (10(j)) defines an SBOM as a "formal record containing the details and supply chain relationships of various components used in building software" &mdash; analogous to an ingredients label. Its enduring value was proven by Log4Shell: organizations with accurate component inventories could answer "are we affected, and where?" in hours; those without spent weeks.</p>
+
+  <h3>CycloneDX vs. SPDX</h3>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Dimension</th><th>CycloneDX</th><th>SPDX</th></tr></thead>
+      <tbody>
+        <tr><td>Steward</td><td>OWASP</td><td>Linux Foundation</td></tr>
+        <tr><td>Standardization</td><td>OWASP flagship; ECMA-424</td><td>ISO/IEC 5962:2021</td></tr>
+        <tr><td>Original focus</td><td>Application security &amp; vulnerability management</td><td>License compliance &amp; provenance</td></tr>
+        <tr><td>Native extensions</td><td>VEX, VDR, CBOM, ML-BOM, HBOM, SaaSBOM</td><td>Broad license metadata; relationships</td></tr>
+        <tr><td>Best leveraged for</td><td>Security-driven supply chain &amp; VEX workflows</td><td>License governance &amp; regulatory/long-term interchange</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>Both are explicitly recognized in the U.S. federal "SBOM Minimum Elements" guidance, and tooling can convert between them. The choice is not zero-sum.</p>
+
+  <div class="callout rec">
+    <div class="ct">Recommendation</div>
+    <p>Standardize on <strong>CycloneDX</strong> as the primary internal format &mdash; its native VEX and security extensions align directly with the vendor-claim validation workflow that is this customer's core concern &mdash; while <strong>accepting SPDX</strong> from vendors that produce it and converting on ingest. Critically: <strong>always regenerate the SBOM independently</strong> from the delivered image using Trivy (or Syft) and reconcile it against the vendor-supplied SBOM. A discrepancy is itself a finding.</p>
+  </div>
+
+  <pre class="code"><span class="cm"># Independently generate an SBOM from the delivered image (do not trust blindly)</span>
+trivy image --format cyclonedx --output sbom.cdx.json <span class="st">vendor-x/app:1.4.2</span>
+
+<span class="cm"># Compare component sets: vendor-supplied vs. independently generated</span>
+<span class="cm"># A delta &mdash; a package present in the image but absent from the vendor SBOM &mdash;</span>
+<span class="cm"># directly tests the claim "we don't use that package."</span></pre>
+
+  <div class="callout warn">
+    <div class="ct">Limitations of SBOMs</div>
+    <ul class="cross" style="margin:0">
+      <li><strong>Accuracy varies by ecosystem</strong> &mdash; statically linked, vendored, or stripped binaries can hide components.</li>
+      <li><strong>Presence &ne; exploitability</strong> &mdash; an SBOM lists Log4j; it does not say whether message-lookup is reachable.</li>
+      <li><strong>A vendor SBOM is a vendor assertion</strong> &mdash; trustworthy only when signed and independently corroborated.</li>
+      <li><strong>Backdoors evade it</strong> &mdash; XZ's malicious code lived inside a legitimate-looking component; the SBOM would have looked clean.</li>
+    </ul>
+  </div>
+</section>
+<!-- ================= 10 VEX ================= -->
+<section class="section" id="vex">
+  <span class="section-tag">Part III &middot; Trust &amp; Evidence</span>
+  <h2>10 &middot; VEX &amp; Vulnerability Context</h2>
+  <p class="lead">VEX &mdash; Vulnerability Exploitability eXchange &mdash; is the missing link between "a CVE is present" and "a CVE is exploitable." It is the machine-readable, signable form of the very claim vendors make verbally: <em>"this vulnerability does not affect our product, and here is why."</em></p>
+
+  <p>VEX is a companion to the SBOM. Where the SBOM says a component is present, VEX states whether a known vulnerability in that component actually affects the product. It uses four status values, and &mdash; crucially &mdash; requires a <strong>justification</strong> when a product is declared not affected.</p>
+
+  <h3>The Four VEX Status Values</h3>
+  <div class="grid cols-4">
+    <div class="card green"><h4>Not Affected</h4><p style="font-size:.88rem">No remediation required. <strong>Must</strong> carry a justification.</p></div>
+    <div class="card red"><h4>Affected</h4><p style="font-size:.88rem">Action recommended; remediation needed.</p></div>
+    <div class="card accent"><h4>Fixed</h4><p style="font-size:.88rem">These versions contain a fix for the vulnerability.</p></div>
+    <div class="card amber"><h4>Under Investigation</h4><p style="font-size:.88rem">Not yet known whether the product is affected.</p></div>
+  </div>
+
+  <h3>The "Not Affected" Justifications &mdash; This Is Where Vendor Claims Get Tested</h3>
+  <p>When a vendor declares "not affected," VEX (in the CISA/OpenVEX and CSAF models) constrains them to a defined set of machine-readable justifications. This transforms a vague verbal excuse into a specific, checkable assertion:</p>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>VEX Justification</th><th>Vendor is effectively claiming&hellip;</th><th>How you corroborate it</th></tr></thead>
+      <tbody>
+        <tr><td><code>component_not_present</code></td><td>"We don't ship that component at all."</td><td>Independent SBOM regeneration (Trivy/Syft); binary composition analysis.</td></tr>
+        <tr><td><code>vulnerable_code_not_present</code></td><td>"The component is there but the vulnerable code path isn't included."</td><td>Version/build reconciliation; function-level analysis.</td></tr>
+        <tr><td><code>vulnerable_code_not_in_execute_path</code></td><td>"The code exists but is never executed."</td><td>Reachability analysis + eBPF runtime confirmation (12).</td></tr>
+        <tr><td><code>vulnerable_code_cannot_be_controlled_by_adversary</code></td><td>"An attacker can't reach the input that triggers it."</td><td>Architecture/exposure review; input-path analysis.</td></tr>
+        <tr><td><code>inline_mitigations_already_exist</code></td><td>"A configuration or control already neutralizes it."</td><td>Configuration inspection; vendor advisory; runtime policy validation.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="callout key">
+    <div class="ct">The Strategic Insight</div>
+    <p>VEX is the bridge between the customer's two stated concerns. It is simultaneously (a) the format in which a <strong>vendor must justify</strong> a "false positive" claim, and (b) the format in which the <strong>enterprise records its own verified decision</strong>. Insisting on signed VEX &mdash; rather than an email saying "don't worry about it" &mdash; is the single most practical upgrade to the vendor-claim process.</p>
+  </div>
+
+  <h3>VEX Formats in This Estate</h3>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Format</th><th>Steward / basis</th><th>Where it fits</th></tr></thead>
+      <tbody>
+        <tr><td><strong>CycloneDX VEX</strong></td><td>OWASP (embedded in / alongside CycloneDX SBOM)</td><td>Primary internal format; travels with the SBOM.</td></tr>
+        <tr><td><strong>OpenVEX</strong></td><td>OpenSSF &mdash; minimal, standalone</td><td>Lightweight, ideal for automation and attaching via Cosign.</td></tr>
+        <tr><td><strong>CSAF VEX</strong></td><td>OASIS Common Security Advisory Framework</td><td>Vendor PSIRT advisories (e.g., Cisco publishes CSAF-compliant VEX).</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="callout warn">
+    <div class="ct">Limitations of VEX</div>
+    <ul class="cross" style="margin:0">
+      <li><strong>It is still an assertion.</strong> A signed VEX from a compromised or careless vendor can be wrong. Corroborate the high-impact ones.</li>
+      <li><strong>Coverage is incomplete.</strong> Most vendors do not yet publish comprehensive VEX; absence is common, not proof of safety.</li>
+      <li><strong>It can be gamed.</strong> A vendor could over-use <code>not_affected</code> to suppress noise. Track vendor VEX accuracy over time as a trust metric.</li>
+      <li><strong>Justifications need evidence.</strong> "not in execute path" is only as good as the analysis behind it &mdash; which is why 12 exists.</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ================= 11 VALIDATE CLAIMS (CENTERPIECE) ================= -->
+<section class="section" id="validate-claims">
+  <span class="section-tag red">Part IV &middot; Validating Vendors</span>
+  <h2>11 &middot; How Enterprises Validate Vendor Claims</h2>
+  <p class="lead">This is the heart of the framework and the customer's central question: <strong>when a vendor disputes a finding and you cannot see the source code, how do you actually verify the claim?</strong> The answer is a layered evidence model that progressively narrows uncertainty &mdash; from documents, to static analysis, to the ground truth of runtime behavior.</p>
+
+  <h3>The Evidence Hierarchy</h3>
+  <p>Not all evidence is equal. Vendor assertions sit at the bottom; observed runtime behavior sits at the top. The enterprise's job is to climb this ladder until residual uncertainty is acceptable for the workload's risk tier.</p>
+
+  <div class="diagram">
+    <div class="mermaid">
+flowchart TB
+    E1["<b>Tier 5 &middot; Runtime ground truth</b><br/>eBPF telemetry: is the module loaded? is the function called?"]
+    E2["<b>Tier 4 &middot; Independent static analysis</b><br/>Your own reachability / call-graph analysis"]
+    E3["<b>Tier 3 &middot; Signed, verifiable evidence</b><br/>Signed VEX + SLSA provenance + attestations"]
+    E4["<b>Tier 2 &middot; Independent corroboration</b><br/>Trivy/Syft SBOM regeneration; hash reconciliation"]
+    E5["<b>Tier 1 &middot; Vendor assertion</b><br/>'It's a false positive' (email / call)"]
+    E5 --> E4 --> E3 --> E2 --> E1
+    classDef weak fill:#cc1f2d,stroke:#8e1420,color:#fff;
+    classDef mid fill:#d98a1f,stroke:#9a5a08,color:#fff;
+    classDef strong fill:#1f9d6b,stroke:#0b5a3c,color:#fff;
+    class E5 weak;
+    class E4,E3 mid;
+    class E2,E1 strong;
+    </div>
+    <div class="fig-cap"><span class="fig-num">Figure 11.1</span> &mdash; The evidence hierarchy. Climb until residual uncertainty matches the workload's risk tier. A verbal assertion alone never satisfies a Tier&nbsp;1 workload.</div>
+  </div>
+
+  <h3>Validating the Three Hardest Claims, Step by Step</h3>
+
+  <h4>Claim A &mdash; "It's a false positive"</h4>
+  <ol class="steps">
+    <li><h4>Reconcile coordinates</h4><p>Confirm the exact component, version, and PURL the scanner flagged. Many "false positives" are version-detection errors &mdash; verify against the image's package database and file hashes.</p></li>
+    <li><h4>Regenerate independently</h4><p>Run Trivy and a second tool (e.g., Syft + Grype) on the image. Concurring tools strengthen the finding; a divergence may validate the vendor's point.</p></li>
+    <li><h4>Demand a signed VEX</h4><p>Require the vendor to express the false-positive claim as a signed VEX with a specific justification (e.g., <code>component_not_present</code>). A vendor unwilling to sign their own claim is a risk signal.</p></li>
+    <li><h4>Corroborate the justification</h4><p>Test the justification against your independent SBOM and, where needed, escalate to reachability/runtime (Claims B/C).</p></li>
+  </ol>
+
+  <h4>Claim B &mdash; "We don't use that package"</h4>
+  <p>This is the <em>most</em> directly verifiable claim, because presence is an observable property of the delivered binary &mdash; no source code required.</p>
+  <ul class="check">
+    <li>Independently generate the SBOM from the image; search for the component by name, PURL, and file hash.</li>
+    <li>Inspect image layers and the filesystem for the library/binary (e.g., the actual <code>.jar</code>, <code>.so</code>, or module).</li>
+    <li>If present despite the denial, the claim is <strong>false on its face</strong> &mdash; and that is a material trust event, not a routine disagreement.</li>
+    <li>If genuinely absent, capture this as a verified VEX <code>component_not_present</code> in your own records.</li>
+  </ul>
+
+  <h4>Claim C &mdash; "The vulnerable code isn't reachable / isn't executed"</h4>
+  <p>This is the hardest claim to verify without source, and where most enterprises stop. It is also where this framework adds the most value, by combining static reachability with runtime observation (detailed in 12).</p>
+  <ol class="steps">
+    <li><h4>Request the vendor's reachability evidence</h4><p>A credible vendor can supply call-graph or reachability analysis showing no path reaches the vulnerable function &mdash; expressed as VEX <code>vulnerable_code_not_in_execute_path</code>.</p></li>
+    <li><h4>Run independent reachability analysis</h4><p>Use binary/bytecode call-graph tooling to test whether the vulnerable symbol is referenced on any reachable path in the delivered artifact.</p></li>
+    <li><h4>Confirm with runtime telemetry</h4><p>Deploy to a representative pre-production environment and use eBPF (Falco/Tetragon) or Prisma Cloud runtime to observe whether the vulnerable module is <em>loaded</em> and the function <em>called</em> under realistic load. Runtime non-execution over a representative window is strong corroboration.</p></li>
+    <li><h4>Record the residual</h4><p>Reachability is probabilistic, not absolute &mdash; document the analysis window and assumptions so the residual risk is explicit in any exception.</p></li>
+  </ol>
+
+  <h3>Can You Verify Without Source Code? &mdash; The Honest Answer</h3>
+  <div class="grid cols-3">
+    <div class="card green">
+      <h4>Yes, strongly</h4>
+      <ul class="check" style="font-size:.86rem"><li>Component presence/absence</li><li>Version &amp; integrity (hashes)</li><li>Signature &amp; provenance validity</li><li>Whether a module loads at runtime</li><li>Whether a function executes at runtime</li></ul>
+    </div>
+    <div class="card amber">
+      <h4>Partially</h4>
+      <ul style="font-size:.86rem;list-style:none;padding:0">
+        <li>&middot; Static reachability (binary analysis is harder than source)</li>
+        <li>&middot; Whether config truly mitigates a flaw</li>
+        <li>&middot; Exploitability under all inputs (you observe a window, not all paths)</li>
+      </ul>
+    </div>
+    <div class="card red">
+      <h4>No / very hard</h4>
+      <ul class="cross" style="font-size:.86rem"><li>Intentional logic bombs / dormant backdoors (XZ-style)</li><li>Vulnerabilities triggered only by rare states</li><li>Vendor's internal design intent</li></ul>
+    </div>
+  </div>
+
+  <h3>Additional Evidence to Request &mdash; The Vendor Evidence Pack</h3>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Evidence</th><th>What it establishes</th><th>Tier where required</th></tr></thead>
+      <tbody>
+        <tr><td>Signed image (Cosign / Notary v2)</td><td>Origin &amp; integrity</td><td>1, 2</td></tr>
+        <tr><td>SLSA provenance attestation</td><td>Build integrity</td><td>1 (L3 target), 2 (L2)</td></tr>
+        <tr><td>SBOM (CycloneDX / SPDX) per release</td><td>Composition</td><td>1, 2</td></tr>
+        <tr><td>Signed VEX with justifications</td><td>Exploitability rationale</td><td>1, 2 (critical)</td></tr>
+        <tr><td>Reachability analysis report</td><td>Code-path exploitability</td><td>1 (disputed criticals)</td></tr>
+        <tr><td>Security advisory / PSIRT reference</td><td>Vendor's formal position</td><td>1, 2</td></tr>
+        <tr><td>Remediation timeline / SLA commitment</td><td>Forward risk management</td><td>1, 2</td></tr>
+        <tr><td>Penetration test / SDLC attestation (SSDF)</td><td>Vendor's own hygiene</td><td>1</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>Comparison of Validation Techniques</h3>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Technique</th><th>What it proves</th><th>Source needed?</th><th>Confidence</th><th>Key limitation</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Vendor SBOM</strong></td><td>Declared composition</td><td>No</td><td><span class="pill med">Medium</span></td><td>An assertion; accuracy varies</td></tr>
+        <tr><td><strong>Independent SBOM (Trivy/Syft)</strong></td><td>Actual composition of the binary</td><td>No</td><td><span class="pill low">High</span></td><td>Misses statically-linked/vendored code</td></tr>
+        <tr><td><strong>VEX</strong></td><td>Exploitability rationale</td><td>No</td><td><span class="pill med">Medium</span></td><td>Still an assertion unless corroborated</td></tr>
+        <tr><td><strong>Static reachability</strong></td><td>No code path to the flaw</td><td>Helps</td><td><span class="pill med">Medium</span></td><td>Hard on binaries; dynamic dispatch/reflection</td></tr>
+        <tr><td><strong>eBPF runtime monitoring</strong></td><td>Module not loaded / not called</td><td>No</td><td><span class="pill low">High*</span></td><td>Only proves behavior over the observed window</td></tr>
+        <tr><td><strong>Provenance (SLSA)</strong></td><td>Build was not tampered</td><td>No</td><td><span class="pill low">High</span></td><td>Says nothing about malicious inputs</td></tr>
+        <tr><td><strong>Signed attestation</strong></td><td>Evidence is authentic</td><td>No</td><td><span class="pill low">High</span></td><td>Trust depends on the signer</td></tr>
+        <tr><td><strong>Runtime telemetry (exploit attempts)</strong></td><td>Active exploitation / anomaly</td><td>No</td><td><span class="pill low">High</span></td><td>Detective, not preventive</td></tr>
+      </tbody>
+    </table>
+    <caption style="display:block;font-size:.78rem;color:var(--muted);padding:10px 4px">*High confidence for the observed behavior in the monitored window; not a mathematical proof of non-exploitability across all possible states.</caption>
+  </div>
+
+  <div class="callout danger">
+    <div class="ct">The XZ Caveat &mdash; Why Validation Has Limits</div>
+    <p>No combination of these techniques would have reliably caught the XZ Utils backdoor at intake: it was deliberately dormant, obfuscated, and triggered only under specific conditions. This is the residual that justifies the final layer &mdash; <strong>continuous runtime monitoring and behavioral anomaly detection</strong> (13). Validation reduces uncertainty; it never eliminates it. Govern accordingly: assume breach, monitor always.</p>
+  </div>
+</section>
+<!-- ================= 12 REACHABILITY ================= -->
+<section class="section" id="reachability">
+  <span class="section-tag">Part IV &middot; Validating Vendors</span>
+  <h2>12 &middot; Reachability &amp; Runtime Exploitability</h2>
+  <p class="lead">Most critical CVEs flagged in a vendor image are <em>present</em> but not <em>exploitable in context</em>. Reachability and runtime exploitability analysis are how the enterprise separates the genuine exposure from the noise &mdash; and how it independently tests the vendor's "not reachable" claim.</p>
+
+  <h3>Two Complementary Questions</h3>
+  <div class="grid cols-2">
+    <div class="card accent">
+      <h4>Static reachability</h4>
+      <p>Does any call path in the artifact reach the vulnerable function? Answered by call-graph analysis of bytecode/binaries &mdash; <em>before</em> deployment. Conservative: if a path <em>could</em> exist, it is treated as reachable.</p>
+      <p style="font-size:.86rem;color:var(--muted)"><strong>Strength:</strong> pre-deployment, no running workload needed.<br><strong>Weakness:</strong> dynamic dispatch, reflection, and native code defeat precision; binary analysis is far harder than source analysis.</p>
+    </div>
+    <div class="card green">
+      <h4>Runtime exploitability</h4>
+      <p>Is the vulnerable module actually <em>loaded</em>, and is the vulnerable function actually <em>called</em>, when the workload runs realistically? Answered by eBPF instrumentation and runtime defense tooling.</p>
+      <p style="font-size:.86rem;color:var(--muted)"><strong>Strength:</strong> observes ground truth; no source needed.<br><strong>Weakness:</strong> only covers the observed window and exercised paths.</p>
+    </div>
+  </div>
+
+  <h3>How Runtime Exploitability Resolves a Disputed Claim</h3>
+  <div class="diagram">
+    <div class="mermaid">
+sequenceDiagram
+    autonumber
+    participant SEC as Security Architecture
+    participant PP as Pre-prod (OpenShift)
+    participant EBPF as eBPF Sensor (Falco/Tetragon)
+    participant GB as Governance Board
+    SEC->>PP: Deploy disputed vendor image
+    SEC->>EBPF: Instrument: watch module load + function calls
+    PP->>PP: Drive representative traffic / load
+    EBPF-->>SEC: Vulnerable module NOT loaded over 14-day window
+    Note over SEC: Corroborates vendor "not in execute path" VEX
+    SEC->>GB: Evidence pack: VEX + reachability + runtime
+    GB-->>SEC: Approve time-boxed exception w/ runtime alert as control
+    Note over EBPF: Standing alert if module ever loads in prod
+    </div>
+    <div class="fig-cap"><span class="fig-num">Figure 12.1</span> &mdash; Using runtime telemetry to verify a "code not reachable" claim and convert it into a monitored, time-boxed exception.</div>
+  </div>
+
+  <h3>eBPF &mdash; The Enabling Technology</h3>
+  <p>eBPF (extended Berkeley Packet Filter) lets security tools attach programs to Linux kernel hooks and observe syscalls, network activity, file I/O, and process behavior across every container on a node &mdash; with low overhead and without source code. This is what makes runtime exploitability verification practical at scale on OpenShift.</p>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Tool</th><th>Model</th><th>Primary role here</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Falco</strong></td><td>eBPF + rules engine (CNCF)</td><td>Detect anomalous syscalls/behavior; alert on policy violations.</td></tr>
+        <tr><td><strong>Tetragon</strong> (Cilium)</td><td>eBPF; applies policy &amp; filtering in-kernel</td><td>Process/function-level observability and runtime enforcement.</td></tr>
+        <tr><td><strong>Prisma Cloud (Defender)</strong></td><td>Agent-based runtime defense</td><td>Models expected container behavior; flags drift &amp; exploit attempts (integrated with the customer's existing stack).</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="callout warn">
+    <div class="ct">Limitations of Reachability &amp; Runtime Analysis</div>
+    <ul class="cross" style="margin:0">
+      <li><strong>Window-bound.</strong> Runtime proves what happened while you watched, not what could happen under an unobserved input.</li>
+      <li><strong>Coverage gaps.</strong> A code path not exercised in pre-prod may still execute in production &mdash; hence the standing production alert.</li>
+      <li><strong>Static imprecision.</strong> Reflection, dynamic class loading, and native interop reduce call-graph accuracy on binaries.</li>
+      <li><strong>Adversarial dormancy.</strong> Malicious code designed to stay dormant (XZ) will not reveal itself in benign runtime observation.</li>
+    </ul>
+  </div>
+
+  <div class="callout rec">
+    <div class="ct">Recommendation</div>
+    <p>Use reachability as a <strong>prioritization and tie-breaking</strong> control, not a universal gate. Apply it specifically to <em>disputed</em> critical/high findings on Tier&nbsp;1/2 workloads. When runtime confirms non-exploitation, do not simply close the finding &mdash; convert it into a <strong>monitored exception</strong> with a standing alert that fires if the vulnerable module ever loads in production.</p>
+  </div>
+</section>
+
+<!-- ================= 13 RUNTIME MONITORING ================= -->
+<section class="section" id="runtime-mon">
+  <span class="section-tag">Part IV &middot; Validating Vendors</span>
+  <h2>13 &middot; Runtime Monitoring &amp; Drift Detection</h2>
+  <p class="lead">Admission control is a point-in-time decision. Production is continuous. Because validation can never be complete &mdash; and because new vulnerabilities are disclosed daily &mdash; runtime monitoring is the layer that catches what intake could not, and confirms that what runs is still what was approved.</p>
+
+  <h3>Drift Detection &mdash; Has the Running Workload Changed?</h3>
+  <p>Drift is any divergence between the approved artifact and what is actually executing: an unexpected process, a binary that was not in the image, an outbound connection to an unknown host, a filesystem change. Drift detection treats the verified image as a baseline and flags deviation. Codecov-style tampering and post-deployment compromise both surface as drift.</p>
+
+  <div class="diagram">
+    <div class="mermaid">
+flowchart LR
+    BASE["Approved image<br/>baseline (digest +<br/>expected behavior)"] --> RUN["Running container<br/>on OpenShift"]
+    RUN --> OBS["eBPF + Prisma Cloud<br/>observe actual behavior"]
+    OBS --> CMP{"Matches<br/>baseline?"}
+    CMP -->|Yes| OK["Normal &mdash; continue"]
+    CMP -->|"No (drift)"| ALERT["Alert + SIEM"]
+    ALERT --> RESP["Respond:<br/>isolate / kill / investigate"]
+    classDef ok fill:#1f9d6b,stroke:#0b5a3c,color:#fff;
+    classDef bad fill:#cc1f2d,stroke:#8e1420,color:#fff;
+    class OK ok;
+    class ALERT,RESP bad;
+    </div>
+    <div class="fig-cap"><span class="fig-num">Figure 13.1</span> &mdash; Drift detection: continuous comparison of runtime behavior against the approved baseline.</div>
+  </div>
+
+  <h3>Continuous Vulnerability Monitoring</h3>
+  <p>The Log4Shell timeline is the canonical lesson: a component sitting safely in production for years became a CVSS&nbsp;10.0 emergency overnight. The framework therefore re-evaluates already-admitted artifacts continuously:</p>
+  <ul class="clean">
+    <li><strong>Registry re-scanning</strong> &mdash; Trivy, Prisma Cloud, and Nexus re-evaluate stored images against updated vulnerability and malware intelligence on a schedule, not just at push time.</li>
+    <li><strong>SBOM-driven impact analysis</strong> &mdash; when a new CVE drops, query stored SBOMs to instantly answer "which of our running images contain the affected component, and where?"</li>
+    <li><strong>VEX &amp; advisory feeds</strong> &mdash; ingest vendor PSIRT advisories and VEX updates so a previously "not affected" status that changes to "affected" triggers re-assessment.</li>
+    <li><strong>Runtime exploit detection</strong> &mdash; eBPF/Prisma watch for active exploitation patterns against known-present components.</li>
+  </ul>
+
+  <h3>The Post-Deployment Monitoring Loop</h3>
+  <div class="diagram">
+    <div class="mermaid">
+flowchart TB
+    A["New CVE / advisory<br/>/ VEX update"] --> B["Match against<br/>stored SBOMs"]
+    B --> C{"Affected images<br/>in production?"}
+    C -->|No| D["Record &amp; close"]
+    C -->|Yes| E["Reachability +<br/>runtime triage"]
+    E --> F{"Exploitable<br/>in context?"}
+    F -->|No| G["Document VEX<br/>not_affected + monitor"]
+    F -->|Yes| H["Remediation workflow:<br/>patch / exception / replace"]
+    H --> I["Re-validate &amp; re-admit"]
+    I --> A
+    classDef ok fill:#1f9d6b,stroke:#0b5a3c,color:#fff;
+    classDef warn fill:#cc1f2d,stroke:#8e1420,color:#fff;
+    class G ok;
+    class H warn;
+    </div>
+    <div class="fig-cap"><span class="fig-num">Figure 13.2</span> &mdash; The continuous monitoring loop that turns a new disclosure into a governed, evidence-based decision within hours.</div>
+  </div>
+
+  <div class="callout rec">
+    <div class="ct">Recommendation</div>
+    <p>Wire runtime detections and drift alerts into the enterprise SIEM and the incident-response runbook, and pre-define the containment action per severity. The value of detection is realized only if a fast, rehearsed response follows. For Tier&nbsp;1 workloads, treat unexplained drift as a potential supply chain compromise until proven otherwise.</p>
+  </div>
+</section>
+<!-- ================= 14 LICENSE ================= -->
+<section class="section" id="license">
+  <span class="section-tag">Part V &middot; Governance Operations</span>
+  <h2>14 &middot; License Governance</h2>
+  <p class="lead">For a regulated insurer, an undetected copyleft obligation in a third-party image is a legal and intellectual-property exposure, not merely a hygiene issue. License governance rides on the same SBOM and registry machinery as security, and is enforced at the same gates.</p>
+
+  <div class="grid cols-3">
+    <div class="card green"><h4>Permitted</h4><p style="font-size:.88rem">Permissive licenses (e.g., MIT, Apache-2.0, BSD) &mdash; auto-approved, recorded in the SBOM.</p></div>
+    <div class="card amber"><h4>Review required</h4><p style="font-size:.88rem">Weak copyleft (e.g., LGPL, MPL) &mdash; allowed with legal review of linkage/distribution context.</p></div>
+    <div class="card red"><h4>Restricted / denied</h4><p style="font-size:.88rem">Strong copyleft (e.g., GPL/AGPL) in distributed artifacts, or unknown/missing licenses &mdash; blocked pending counsel.</p></div>
+  </div>
+
+  <h3>License Controls in the Pipeline</h3>
+  <ul class="clean">
+    <li><strong>Detection</strong> &mdash; license metadata captured in the SBOM (SPDX excels here) during build and registry ingest.</li>
+    <li><strong>Policy enforcement</strong> &mdash; Nexus Repository Firewall and IQ policies block or warn on deny-listed licenses at the proxy boundary.</li>
+    <li><strong>Attribution &amp; obligations</strong> &mdash; generate and retain attribution notices for distributed software to satisfy license terms.</li>
+    <li><strong>Continuous review</strong> &mdash; license changes between vendor releases are flagged the same way version changes are.</li>
+  </ul>
+
+  <div class="callout warn">
+    <div class="ct">Limitation</div>
+    <p>License detection is only as accurate as declared metadata. Dual-licensed, re-licensed, or undeclared components require human legal review &mdash; automation flags, counsel decides. "Unknown license" should be treated as <em>restricted</em> by default, not waved through.</p>
+  </div>
+</section>
+
+<!-- ================= 15 POLICY AS CODE ================= -->
+<section class="section" id="pac">
+  <span class="section-tag">Part V &middot; Governance Operations</span>
+  <h2>15 &middot; Policy as Code</h2>
+  <p class="lead">Governance that lives in a PDF is advisory. Governance expressed as code is enforced automatically, consistently, and verifiably &mdash; the same policy evaluated identically for every artifact, with the decision logged. This is what makes the framework auditable rather than aspirational.</p>
+
+  <h3>Where Policy as Code Executes</h3>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Enforcement point</th><th>Engine</th><th>What it enforces</th></tr></thead>
+      <tbody>
+        <tr><td>Registry ingest</td><td>Nexus Repository Firewall / IQ policy</td><td>Malware, CVE, license, age, integrity policies on inbound components.</td></tr>
+        <tr><td>CI/CD pipeline</td><td>Pipeline policy gates (Git-based CI/CD)</td><td>Fail builds on policy violations; require SBOM, signature, provenance.</td></tr>
+        <tr><td>OpenShift admission</td><td>OPA/Gatekeeper or Kyverno admission webhook</td><td>Reject pods whose images are unsigned, unverified, or non-compliant.</td></tr>
+        <tr><td>Cloud / runtime</td><td>Prisma Cloud policies</td><td>Posture and runtime policy across the OpenShift estate.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>Illustrative Admission Policy</h3>
+  <div class="callout illustrative">
+    <div class="ct">Illustrative enterprise example</div>
+    <p>The policy below is a representative pattern, not a named-company configuration. It shows how an OpenShift admission gate enforces signature verification and blocks unresolved criticals while honoring a verified VEX/exception.</p>
+  </div>
+  <pre class="code"><span class="cm"># Kyverno-style admission policy (illustrative)</span>
+<span class="ky">apiVersion:</span> kyverno.io/v1
+<span class="ky">kind:</span> ClusterPolicy
+<span class="ky">metadata:</span>
+  <span class="ky">name:</span> <span class="st">supply-chain-admission</span>
+<span class="ky">spec:</span>
+  <span class="ky">validationFailureAction:</span> <span class="st">Enforce</span>
+  <span class="ky">rules:</span>
+    - <span class="ky">name:</span> <span class="st">require-trusted-signature</span>
+      <span class="ky">match:</span> { <span class="ky">resources:</span> { <span class="ky">kinds:</span> [Pod] } }
+      <span class="ky">verifyImages:</span>
+        - <span class="ky">imageReferences:</span> [<span class="st">"registry.internal/*"</span>]
+          <span class="ky">attestors:</span>            <span class="cm"># verify Cosign signature / identity</span>
+            - <span class="ky">entries:</span> [{ <span class="ky">keys:</span> { <span class="ky">kms:</span> <span class="st">"hashivault://supply-chain/cosign-pub"</span> } }]
+          <span class="ky">required:</span> true
+    - <span class="ky">name:</span> <span class="st">block-unresolved-critical</span>   <span class="cm"># unless a verified VEX/exception label is present</span>
+      <span class="ky">match:</span> { <span class="ky">resources:</span> { <span class="ky">kinds:</span> [Pod] } }
+      <span class="ky">validate:</span>
+        <span class="ky">message:</span> <span class="st">"Unresolved CRITICAL with no verified VEX/exception."</span></pre>
+
+  <div class="callout rec">
+    <div class="ct">Recommendation</div>
+    <p>Keep policy in version control alongside application code, peer-reviewed and tested like any other code, with changes flowing through the same Git-based pipeline. Run policies in <em>warn/audit</em> mode first to measure impact, then promote to <em>enforce</em>. Store the resulting decisions immutably for audit (17).</p>
+  </div>
+</section>
+
+<!-- ================= 16 RISK ACCEPTANCE ================= -->
+<section class="section" id="risk-accept">
+  <span class="section-tag">Part V &middot; Governance Operations</span>
+  <h2>16 &middot; Risk Acceptance, Exceptions &amp; Governance Boards</h2>
+  <p class="lead">Some risk will always be accepted &mdash; the question is whether it is accepted <em>knowingly, by the right person, with controls and an expiry date</em>, or silently by an engineer under delivery pressure. The exception process exists to make the former the only sanctioned path.</p>
+
+  <h3>The Supply Chain Risk Matrix</h3>
+  <p>Every disputed or unresolved finding is scored on likelihood of exploitation (informed by reachability/runtime evidence) against business impact (informed by data sensitivity and exposure). The score sets the required approval authority.</p>
+
+  <div class="legend">
+    <span><i style="background:#1f9d6b"></i> Low &mdash; team-level acceptance</span>
+    <span><i style="background:#d4a017"></i> Medium &mdash; security lead</span>
+    <span><i style="background:#dd7722"></i> High &mdash; governance board</span>
+    <span><i style="background:#cc1f2d"></i> Critical &mdash; CISO / no exception</span>
+  </div>
+
+  <div class="matrix">
+    <div class="mh">Impact &darr; / Likelihood &rarr;</div>
+    <div class="mh">Rare</div><div class="mh">Unlikely</div><div class="mh">Possible</div><div class="mh">Likely</div><div class="mh">Almost certain</div>
+
+    <div class="ml">Severe<br>(PII/claims, internet-facing)</div>
+    <div class="cell c-med">Medium</div><div class="cell c-high">High</div><div class="cell c-crit">Critical</div><div class="cell c-crit">Critical</div><div class="cell c-crit">Critical</div>
+
+    <div class="ml">Major</div>
+    <div class="cell c-med">Medium</div><div class="cell c-high">High</div><div class="cell c-high">High</div><div class="cell c-crit">Critical</div><div class="cell c-crit">Critical</div>
+
+    <div class="ml">Moderate</div>
+    <div class="cell c-low">Low</div><div class="cell c-med">Medium</div><div class="cell c-high">High</div><div class="cell c-high">High</div><div class="cell c-crit">Critical</div>
+
+    <div class="ml">Minor</div>
+    <div class="cell c-low">Low</div><div class="cell c-low">Low</div><div class="cell c-med">Medium</div><div class="cell c-med">Medium</div><div class="cell c-high">High</div>
+
+    <div class="ml">Negligible</div>
+    <div class="cell c-low">Low</div><div class="cell c-low">Low</div><div class="cell c-low">Low</div><div class="cell c-med">Medium</div><div class="cell c-med">Medium</div>
+  </div>
+  <p style="font-size:.85rem;color:var(--muted)">Likelihood is adjusted <em>downward</em> by verified non-reachability/non-execution evidence and <em>upward</em> by known active exploitation (e.g., presence on the CISA Known Exploited Vulnerabilities catalog).</p>
+
+  <h3>The Exception Decision Tree</h3>
+  <div class="diagram">
+    <div class="mermaid">
+flowchart TD
+    F["Unresolved finding<br/>on a vendor image"] --> Q1{"Malware or<br/>integrity failure?"}
+    Q1 -->|Yes| REJ["REJECT &mdash; no exception"]
+    Q1 -->|No| Q2{"Fixed version<br/>available?"}
+    Q2 -->|Yes| FIX["Require fix &mdash;<br/>no exception needed"]
+    Q2 -->|No| Q3{"Verified non-exploitable?<br/>(VEX + reachability + runtime)"}
+    Q3 -->|Yes| MON["Monitored exception<br/>+ standing runtime alert"]
+    Q3 -->|Inconclusive| Q4{"Compensating<br/>controls available?"}
+    Q4 -->|No| REJ
+    Q4 -->|Yes| Q5{"Risk score?"}
+    Q5 -->|Low/Med| TEX["Time-boxed exception<br/>(security lead)"]
+    Q5 -->|High| BEX["Time-boxed exception<br/>(governance board)"]
+    Q5 -->|Critical| REJ
+    classDef rej fill:#cc1f2d,stroke:#8e1420,color:#fff;
+    classDef ok fill:#1f9d6b,stroke:#0b5a3c,color:#fff;
+    class REJ rej;
+    class FIX,MON,TEX,BEX ok;
+    </div>
+    <div class="fig-cap"><span class="fig-num">Figure 16.1</span> &mdash; The exception decision tree. Malware and integrity failures have no exception path; everything else is governed by evidence, controls, and authority level.</div>
+  </div>
+
+  <h3>Anatomy of a Valid Exception Record</h3>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Field</th><th>Requirement</th></tr></thead>
+      <tbody>
+        <tr><td>Finding &amp; artifact</td><td>CVE(s), component (PURL), image digest, vendor, version.</td></tr>
+        <tr><td>Justification &amp; evidence</td><td>Why accepted &mdash; linked VEX, reachability report, runtime telemetry.</td></tr>
+        <tr><td>Compensating controls</td><td>What reduces the residual risk (network policy, WAF, runtime alert, isolation).</td></tr>
+        <tr><td>Risk score &amp; approver</td><td>Matrix score and the named individual/board at the correct authority level.</td></tr>
+        <tr><td>Expiry</td><td>Mandatory end date; auto-revokes and re-blocks at the registry on expiry.</td></tr>
+        <tr><td>Accountable owner</td><td>A named person who owns the residual risk &mdash; never "the team."</td></tr>
+        <tr><td>Audit reference</td><td>Immutable record ID linking to the decision and evidence.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>The Supply Chain Governance Board</h3>
+  <p>A standing, cross-functional board owns the framework and adjudicates High-risk exceptions. Membership spans the customer's named stakeholder groups:</p>
+  <div class="grid cols-3">
+    <div class="card"><h4>Security &amp; Architecture</h4><p style="font-size:.88rem">Security Architects and the CISO office &mdash; own risk standards and final security veto.</p></div>
+    <div class="card"><h4>Engineering &amp; Platform</h4><p style="font-size:.88rem">DevSecOps, Platform, and Enterprise Architecture &mdash; own enforcement and feasibility.</p></div>
+    <div class="card"><h4>Risk, Compliance &amp; Legal</h4><p style="font-size:.88rem">Own regulatory alignment, license risk, and the audit posture.</p></div>
+  </div>
+  <div class="callout rec">
+    <div class="ct">Recommendation</div>
+    <p>Cap exception duration (e.g., 90 days for High, 30 for time-sensitive criticals), forbid auto-renewal without re-evaluation, and publish an exception aging report to the board each cycle. A growing backlog of stale exceptions is the leading indicator that governance is decaying &mdash; track it as a board-level KPI.</p>
+  </div>
+</section>
+<!-- ================= 17 CONTINUOUS COMPLIANCE ================= -->
+<section class="section" id="continuous">
+  <span class="section-tag">Part V &middot; Governance Operations</span>
+  <h2>17 &middot; Continuous Compliance &amp; Audit Trails</h2>
+  <p class="lead">For an insurer, the framework must do more than reduce risk &mdash; it must <em>demonstrate</em> that risk was managed, to auditors, regulators, and the enterprise's own cyber-insurers. Continuous compliance means the evidence is generated as a by-product of the pipeline, not assembled in a panic before an audit.</p>
+
+  <h3>Audit Trail &mdash; Every Decision, Immutable</h3>
+  <p>Each artifact accumulates a verifiable chain of evidence and decisions, stored immutably (write-once, tamper-evident) and queryable:</p>
+  <ul class="clean">
+    <li>Who signed the image, and was the signature verified at admission.</li>
+    <li>What provenance and attestations were present and validated.</li>
+    <li>What the SBOM contained, and how the independent SBOM compared.</li>
+    <li>What scanners reported, and what VEX statements applied.</li>
+    <li>What admission decision was made, by which policy, at what time.</li>
+    <li>What exceptions were granted, by whom, with what controls and expiry.</li>
+    <li>What runtime events and drift alerts occurred post-deployment.</li>
+  </ul>
+
+  <h3>The Executive Compliance Dashboard</h3>
+  <p>Governance is only as strong as leadership's visibility into it. The following dashboard pattern translates the framework's machinery into board-level signals.</p>
+  <div class="grid cols-4">
+    <div class="card accent"><div class="big-num">98.6%</div><div class="stat-label">Running images with a verified signature <span style="color:#b08;">(illustrative)</span></div></div>
+    <div class="card green"><div class="big-num">94%</div><div class="stat-label">Tier&nbsp;1 images with valid provenance <span style="color:#b08;">(illustrative)</span></div></div>
+    <div class="card amber"><div class="big-num">12</div><div class="stat-label">Active exceptions &mdash; 2 aging &gt;60d <span style="color:#b08;">(illustrative)</span></div></div>
+    <div class="card red"><div class="big-num">0</div><div class="stat-label">Unsigned Tier&nbsp;1 images in production <span style="color:#b08;">(illustrative)</span></div></div>
+  </div>
+  <div class="callout illustrative">
+    <div class="ct">Illustrative enterprise example</div>
+    <p>The figures above are sample targets to show the <em>shape</em> of an executive dashboard, not measurements from any organization. In adoption, these become live KPIs sourced from Nexus, Prisma Cloud, the admission controller, and the exception register.</p>
+  </div>
+
+  <h3>Recommended Governance KPIs</h3>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>KPI</th><th>What it tells leadership</th><th>Healthy direction</th></tr></thead>
+      <tbody>
+        <tr><td>Signature verification coverage</td><td>Authenticity enforcement reach</td><td>&rarr; 100% for Tier&nbsp;1/2</td></tr>
+        <tr><td>Provenance attestation coverage</td><td>Build-integrity assurance</td><td>Increasing</td></tr>
+        <tr><td>Mean time to remediate (MTTR) criticals</td><td>Responsiveness to disclosure</td><td>Decreasing</td></tr>
+        <tr><td>Open exceptions &amp; average age</td><td>Accumulated accepted risk</td><td>Low &amp; stable</td></tr>
+        <tr><td>Vendor VEX accuracy</td><td>Trustworthiness of vendor claims</td><td>High per vendor</td></tr>
+        <tr><td>Firewall quarantine events</td><td>Threats stopped at the boundary</td><td>Tracked / triaged</td></tr>
+        <tr><td>Drift alerts &amp; runtime detections</td><td>Post-deployment integrity</td><td>Low, fully triaged</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>Regulatory &amp; Standards Alignment</h3>
+  <p>The framework maps cleanly onto the public baselines that increasingly shape expectations for regulated enterprises:</p>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Reference</th><th>Relevance</th></tr></thead>
+      <tbody>
+        <tr><td><strong>EO 14028</strong></td><td>Establishes SBOM definition and the federal push for software supply chain security; sets the direction the broader market follows.</td></tr>
+        <tr><td><strong>NIST SP 800-218 (SSDF)</strong></td><td>Secure Software Development Framework &mdash; the baseline against which to assess vendors; basis for the CISA secure-software attestation.</td></tr>
+        <tr><td><strong>NIST SP 800-161</strong></td><td>Cyber supply chain risk management practices for the enterprise program itself.</td></tr>
+        <tr><td><strong>SLSA</strong></td><td>Build-integrity levels for provenance requirements.</td></tr>
+        <tr><td><strong>ISO/IEC 5962</strong></td><td>Standardizes the SPDX SBOM format.</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="callout warn">
+    <div class="ct">Note on Sector-Specific Regulation</div>
+    <p>Insurance supervision is jurisdiction-specific (for example, NYDFS Part&nbsp;500 in New York, and operational-resilience regimes such as the EU's DORA for financial entities). This framework is designed to <em>support</em> such obligations through demonstrable third-party software due diligence and auditability, but mapping to a specific regulator's text should be confirmed with the enterprise's own compliance and legal functions.</p>
+  </div>
+</section>
+
+<!-- ================= 18 REFERENCE ARCHITECTURE ================= -->
+<section class="section" id="architecture">
+  <span class="section-tag">Part VI &middot; Reference</span>
+  <h2>18 &middot; Reference Architecture</h2>
+  <p class="lead">The framework mapped onto the customer's actual stack &mdash; Red&nbsp;Hat OpenShift, Sonatype Nexus &amp; Repository Firewall, Prisma Cloud, Trivy, HashiCorp Vault, and Git-based CI/CD &mdash; showing where each control executes and where trust decisions are enforced.</p>
+
+  <div class="diagram">
+    <div class="mermaid">
+flowchart TB
+    subgraph EXT["External"]
+      VND["Third-party vendor<br/>(image + SBOM + VEX<br/>+ signature + provenance)"]
+      OSS["Public registries /<br/>OSS dependencies"]
+    end
+    subgraph GATE["Ingress &amp; Governance"]
+      NXFW{{"Sonatype Repository Firewall<br/>policy + quarantine"}}
+      NEXUS["Nexus Repository<br/>(proxy + hosted + staging)"]
+    end
+    subgraph CICD["Git-based CI/CD"]
+      BUILD["Build &amp; verify:<br/>Trivy scan, SBOM gen,<br/>Cosign verify, provenance"]
+      VAULT[("HashiCorp Vault<br/>signing keys + dynamic secrets")]
+    end
+    subgraph OCP["Red Hat OpenShift"]
+      ADM{{"Admission control<br/>OPA/Gatekeeper Â· Kyverno<br/>(verify sig + policy)"}}
+      WL["Workloads<br/>(running containers)"]
+      PRISMA["Prisma Cloud Defender<br/>+ eBPF (Falco/Tetragon)"]
+    end
+    SIEM[("SIEM + Audit trail<br/>+ Governance dashboard")]
+    OSS --> NXFW
+    VND --> NXFW
+    NXFW -->|pass| NEXUS
+    NXFW -->|fail| QUAR["Quarantine"]
+    NEXUS --> BUILD
+    VAULT -.-> BUILD
+    VAULT -.-> ADM
+    BUILD --> ADM
+    ADM -->|admit| WL
+    ADM -->|reject| BLK["Blocked"]
+    WL --> PRISMA
+    PRISMA --> SIEM
+    ADM --> SIEM
+    NXFW --> SIEM
+    PRISMA -.->|new CVE / drift| NEXUS
+    classDef bad fill:#cc1f2d,stroke:#8e1420,color:#fff;
+    classDef vault fill:#15375f,stroke:#0b1f38,color:#fff;
+    class QUAR,BLK bad;
+    class VAULT,SIEM vault;
+    </div>
+    <div class="fig-cap"><span class="fig-num">Figure 18.1</span> &mdash; End-to-end reference architecture. Trust is enforced at two independent choke points &mdash; the Repository Firewall and OpenShift admission &mdash; with Vault anchoring secrets and signing, and Prisma Cloud/eBPF closing the loop at runtime.</div>
+  </div>
+
+  <h3>Control Placement Summary</h3>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Stage</th><th>Component</th><th>Controls enforced</th></tr></thead>
+      <tbody>
+        <tr><td>Ingress</td><td>Sonatype Repository Firewall</td><td>Malware/CVE/license/age/integrity policy; quarantine of violating components.</td></tr>
+        <tr><td>Storage</td><td>Nexus Repository</td><td>System of record; proxy/hosted/staging separation; vendor namespace isolation.</td></tr>
+        <tr><td>Build</td><td>Git-based CI/CD + Trivy</td><td>Independent SBOM generation, scanning, signature &amp; provenance verification, policy gates.</td></tr>
+        <tr><td>Secrets &amp; signing</td><td>HashiCorp Vault</td><td>Custody of Cosign keys; dynamic, short-lived CI secrets (limits CircleCI-style blast radius).</td></tr>
+        <tr><td>Admission</td><td>OpenShift + OPA/Gatekeeper or Kyverno</td><td>Reject unsigned/unverified/non-compliant pods; honor verified VEX/exception labels.</td></tr>
+        <tr><td>Runtime</td><td>Prisma Cloud + eBPF</td><td>Reachability/exploitability confirmation, drift detection, exploit-attempt detection.</td></tr>
+        <tr><td>Assurance</td><td>SIEM + audit store</td><td>Immutable decision log, KPIs, executive dashboard, continuous compliance evidence.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="callout danger">
+    <div class="ct">Security Note &mdash; Two Choke Points, Not One</div>
+    <p>Signature and policy verification are enforced at <strong>both</strong> the registry boundary and OpenShift admission. A registry-only check is bypassable by a workload that pulls an image directly to a node; an admission-only check trusts a registry that may have been populated out-of-band. Both gates, backed by the same Vault-anchored trust policy, provide defense in depth.</p>
+  </div>
+</section>
+<!-- ================= 19 INDUSTRY PRACTICES ================= -->
+<section class="section" id="industry">
+  <span class="section-tag">Part VI &middot; Reference</span>
+  <h2>19 &middot; How Leading Organizations Approach This</h2>
+  <p class="lead">The patterns in this framework are not theoretical &mdash; they reflect approaches that major technology and regulated organizations have adopted and, in several cases, publicly documented. The summaries below are restricted to what each organization has stated publicly.</p>
+
+  <div class="callout illustrative">
+    <div class="ct">Attribution Discipline</div>
+    <p>Technology-vendor practices (Google, Microsoft, Red Hat) are drawn from their own public documentation and are cited in Section&nbsp;R. For financial-services and insurance firms, detailed internal software-supply-chain implementations are generally <strong>not</strong> publicly disclosed; where this document discusses how such an enterprise might apply a control, it is explicitly marked <strong>"Illustrative enterprise example"</strong> and should not be read as a statement about that company's actual internal systems.</p>
+  </div>
+
+  <h3>Publicly Documented Technology-Vendor Practices</h3>
+  <div class="grid cols-3">
+    <div class="card accent">
+      <h4>Google</h4>
+      <p>Co-proposed <strong>SLSA</strong> with the OpenSSF (2021) as an end-to-end supply chain integrity framework. Internally enforces <strong>Binary Authorization for Borg (BAB)</strong>, a deploy-time check ensuring production code is reviewed, checked in, and verifiably built. Offers <strong>Binary Authorization</strong> and SLSA-provenance verification on GKE/Cloud Build.</p>
+    </div>
+    <div class="card accent">
+      <h4>Microsoft</h4>
+      <p>An engineer (Andres Freund) <strong>discovered the XZ Utils backdoor</strong> while investigating SSH latency &mdash; a real-world example of behavioral anomaly detection. Microsoft <strong>open-sourced its SBOM generation tool</strong>, producing SPDX-format SBOMs from internal build practice.</p>
+    </div>
+    <div class="card accent">
+      <h4>Red Hat</h4>
+      <p>Signs its container images and publishes machine-readable security data: <strong>CSAF VEX documents</strong> (generally available since 2023) and <strong>per-CVE VEX files</strong> in CSAF format via the Customer Portal &mdash; a working model of vendor-published, machine-readable exploitability data.</p>
+    </div>
+  </div>
+
+  <h3>Open-Source Governance Heritage in Financial Services</h3>
+  <div class="grid cols-2">
+    <div class="card">
+      <h4>Capital One &mdash; governance-as-code</h4>
+      <p>Capital One created and open-sourced <strong>Cloud Custodian</strong> (now a CNCF project), a policy-as-code engine for cloud governance. While focused on cloud-resource policy rather than image supply chain specifically, it publicly demonstrates a financial institution's embrace of <strong>policy-as-code</strong> &mdash; the same principle this framework applies at 15.</p>
+    </div>
+    <div class="card illustrative" style="border-top:3px solid #8b6fb0">
+      <h4>Insurers &amp; banks &mdash; sector posture <span class="pill na">illustrative</span></h4>
+      <p>Large insurers and banks (e.g., Allianz, AXA, Zurich, MetLife, Prudential, JPMorgan Chase) operate under stringent third-party risk regulation and commonly participate in sector information-sharing (such as FS-ISAC). Specific internal supply-chain tooling is generally not publicly disclosed; the controls in this framework are presented as how such a regulated enterprise <em>can</em> meet those obligations, not as a description of any one firm's systems.</p>
+    </div>
+  </div>
+
+  <h3>Common Threads Across Mature Programs</h3>
+  <ul class="check">
+    <li><strong>Provenance and build integrity</strong> are treated as first-class, not optional (SLSA, BAB).</li>
+    <li><strong>Machine-readable security data</strong> (SBOM, VEX/CSAF) is produced and consumed programmatically, not via email (Red Hat, Microsoft).</li>
+    <li><strong>Policy-as-code</strong> turns governance into enforced, auditable automation (Capital One / Cloud Custodian).</li>
+    <li><strong>Behavioral/runtime signals</strong> catch what intake checks miss (the XZ discovery).</li>
+  </ul>
+</section>
+
+<!-- ================= 20 RECOMMENDATIONS ================= -->
+<section class="section" id="recommendations">
+  <span class="section-tag">Part VI &middot; Reference</span>
+  <h2>20 &middot; Consultant Recommendations &amp; Adoption Roadmap</h2>
+  <p class="lead">A framework is only valuable if it can be adopted without halting delivery. The following phased roadmap sequences the controls by risk-reduction leverage and implementation effort, mapped to the customer's existing tooling so that most phases extend &mdash; rather than replace &mdash; what is already in place.</p>
+
+  <h3>Phased Adoption Roadmap</h3>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Phase</th><th>Focus</th><th>Key actions</th><th>Outcome</th></tr></thead>
+      <tbody>
+        <tr><td><strong>0 &mdash; Baseline</strong><br><span class="pill info">0&ndash;1 mo</span></td><td>See what you have</td><td>Inventory vendor images; turn on Trivy + Prisma scanning everywhere; confirm Repository Firewall quarantine is enabled for malicious components.</td><td>Visibility &amp; a malware floor.</td></tr>
+        <tr><td><strong>1 &mdash; Authenticity</strong><br><span class="pill info">1&ndash;3 mo</span></td><td>Layer 1</td><td>Stand up Cosign verification with keys in Vault; enforce signatures at the OpenShift admission webhook for Tier&nbsp;1; register vendor signing identities.</td><td>No unsigned Tier&nbsp;1 image runs.</td></tr>
+        <tr><td><strong>2 &mdash; Evidence as contract</strong><br><span class="pill med">2&ndash;4 mo</span></td><td>Onboarding</td><td>Codify SBOM/VEX/provenance as onboarding deliverables; deploy the tiering model; require signed VEX for disputed findings.</td><td>Burden of proof shifts to vendors.</td></tr>
+        <tr><td><strong>3 &mdash; Composition &amp; context</strong><br><span class="pill med">3&ndash;6 mo</span></td><td>Layers 3&ndash;4</td><td>Independent SBOM regeneration &amp; reconciliation; ingest VEX into scan triage; SBOM-driven CVE impact queries.</td><td>Noise reduced; faster Log4Shell-style response.</td></tr>
+        <tr><td><strong>4 &mdash; Provenance</strong><br><span class="pill high">4&ndash;8 mo</span></td><td>Layer 2</td><td>Verify SLSA provenance / in-toto attestations at admission; push Tier&nbsp;1 vendors toward Build L3.</td><td>Defense against build-system compromise.</td></tr>
+        <tr><td><strong>5 &mdash; Exploitability</strong><br><span class="pill high">6&ndash;10 mo</span></td><td>Layer 5</td><td>Reachability analysis for disputed criticals; eBPF runtime confirmation (Falco/Tetragon) integrated with Prisma Cloud.</td><td>Vendor "not reachable" claims independently verifiable.</td></tr>
+        <tr><td><strong>6 &mdash; Continuous assurance</strong><br><span class="pill low">ongoing</span></td><td>Layers 6&ndash;7</td><td>Policy-as-code in enforce mode; drift detection; exception register; executive dashboard &amp; audit trail.</td><td>Self-sustaining, auditable governance.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>Ten Recommendations for Leadership</h3>
+  <div class="grid cols-2">
+    <div class="card green"><h4>1. Make evidence contractual</h4><p style="font-size:.9rem">Require signature, SBOM, VEX, and provenance at onboarding &mdash; not during incidents.</p></div>
+    <div class="card green"><h4>2. Never accept "false positive" verbally</h4><p style="font-size:.9rem">Demand a signed VEX with a justification you can corroborate.</p></div>
+    <div class="card green"><h4>3. Verify at two choke points</h4><p style="font-size:.9rem">Enforce trust at both the Repository Firewall and OpenShift admission.</p></div>
+    <div class="card green"><h4>4. Treat the SBOM as one layer</h4><p style="font-size:.9rem">Pair it with provenance, VEX, reachability, and runtime &mdash; never alone.</p></div>
+    <div class="card green"><h4>5. Use runtime as the tie-breaker</h4><p style="font-size:.9rem">eBPF telemetry resolves disputed "not reachable" claims with ground truth.</p></div>
+    <div class="card green"><h4>6. Custody signing keys in Vault</h4><p style="font-size:.9rem">Own the trust anchor; use dynamic, short-lived CI secrets.</p></div>
+    <div class="card green"><h4>7. Time-box every exception</h4><p style="font-size:.9rem">Named owner, compensating controls, expiry, board approval for High.</p></div>
+    <div class="card green"><h4>8. Assess the vendor's supply chain</h4><p style="font-size:.9rem">3CX proves vendor trust is transitive &mdash; assess their hygiene (SSDF).</p></div>
+    <div class="card green"><h4>9. Monitor forever</h4><p style="font-size:.9rem">Re-scan, watch advisories, and detect drift &mdash; admission is not the end.</p></div>
+    <div class="card green"><h4>10. Make it auditable by design</h4><p style="font-size:.9rem">Generate immutable evidence as a by-product of the pipeline.</p></div>
+  </div>
+
+  <div class="callout key">
+    <div class="ct">Closing Position</div>
+    <p>The enterprise will never own the source code of its vendors &mdash; and it does not need to. What it needs is a disciplined system that converts every claim into a verifiable evidence requirement, enforces trust decisions automatically, and watches continuously for the residual it cannot eliminate. That system is the difference between <em>hoping</em> a vendor image is safe and being able to <em>demonstrate</em>, to a regulator or an auditor, exactly why it was trusted &mdash; or why it was not.</p>
+  </div>
+</section>
+<!-- ================= APPENDIX ================= -->
+<section class="section" id="appendix">
+  <span class="section-tag">Appendices</span>
+  <h2>A &middot; Appendices</h2>
+
+  <h3>Appendix A &mdash; Admit / Reject Quick-Reference</h3>
+  <div class="grid cols-2">
+    <div class="card red">
+      <h4>Reject outright (no exception)</h4>
+      <ul class="cross" style="font-size:.9rem">
+        <li>Confirmed malware / backdoor indicators</li>
+        <li>Invalid or missing signature (Tier 1)</li>
+        <li>Hash / integrity mismatch vs. declared digest</li>
+        <li>Failed provenance where tier requires it</li>
+        <li>Prohibited license in a distributed artifact</li>
+        <li>Expired exception, not renewed</li>
+      </ul>
+    </div>
+    <div class="card green">
+      <h4>Admit (with conditions)</h4>
+      <ul class="check" style="font-size:.9rem">
+        <li>Signed, provenance-verified, clean scan</li>
+        <li>Findings resolved by fixed version</li>
+        <li>Verified non-exploitable (VEX + reachability + runtime) &rarr; monitored</li>
+        <li>Board-approved, time-boxed exception with controls</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>Appendix B &mdash; Evidence Requirements by Vendor Tier</h3>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Evidence</th><th>Tier 1 (Critical)</th><th>Tier 2 (Important)</th><th>Tier 3 (Standard)</th></tr></thead>
+      <tbody>
+        <tr><td>Signed image</td><td><span class="pill crit">Required</span></td><td><span class="pill crit">Required</span></td><td><span class="pill med">Preferred</span></td></tr>
+        <tr><td>SLSA provenance</td><td><span class="pill crit">Required (L3)</span></td><td><span class="pill high">Required (L2)</span></td><td><span class="pill na">Optional</span></td></tr>
+        <tr><td>SBOM per release</td><td><span class="pill crit">Required</span></td><td><span class="pill crit">Required</span></td><td><span class="pill med">On request</span></td></tr>
+        <tr><td>Signed VEX</td><td><span class="pill crit">All crit/high</span></td><td><span class="pill high">Criticals</span></td><td><span class="pill na">On dispute</span></td></tr>
+        <tr><td>Reachability report</td><td><span class="pill high">Disputed criticals</span></td><td><span class="pill med">On request</span></td><td><span class="pill na">&mdash;</span></td></tr>
+        <tr><td>PSIRT / advisory feed</td><td><span class="pill crit">Required</span></td><td><span class="pill high">Required</span></td><td><span class="pill na">Optional</span></td></tr>
+        <tr><td>SSDF / SDLC attestation</td><td><span class="pill high">Required</span></td><td><span class="pill med">Preferred</span></td><td><span class="pill na">&mdash;</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>Appendix C &mdash; Glossary</h3>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Term</th><th>Definition</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Attestation</strong></td><td>A signed, machine-readable statement (predicate) about an artifact (subject), e.g., in-toto.</td></tr>
+        <tr><td><strong>CSAF</strong></td><td>Common Security Advisory Framework (OASIS) &mdash; a standard for machine-readable security advisories, with a VEX profile.</td></tr>
+        <tr><td><strong>Cosign</strong></td><td>Sigstore tool for signing/verifying OCI artifacts; supports keyed and keyless signing.</td></tr>
+        <tr><td><strong>CycloneDX</strong></td><td>OWASP SBOM standard (ECMA-424) with native VEX and security extensions.</td></tr>
+        <tr><td><strong>Drift</strong></td><td>Divergence between an approved artifact's baseline and its actual runtime behavior.</td></tr>
+        <tr><td><strong>eBPF</strong></td><td>Extended Berkeley Packet Filter &mdash; Linux kernel technology for low-overhead observability and security enforcement.</td></tr>
+        <tr><td><strong>Fulcio / Rekor</strong></td><td>Sigstore components: Fulcio issues short-lived signing certificates; Rekor is the signature transparency log.</td></tr>
+        <tr><td><strong>in-toto</strong></td><td>Framework defining a standard signed attestation format for supply chain steps.</td></tr>
+        <tr><td><strong>Notary v2 (notation)</strong></td><td>OCI-native, X.509-based artifact signing specification.</td></tr>
+        <tr><td><strong>Provenance</strong></td><td>Verifiable metadata describing how, where, and from what an artifact was built.</td></tr>
+        <tr><td><strong>PURL</strong></td><td>Package URL &mdash; a standardized identifier for a software package (name, version, ecosystem).</td></tr>
+        <tr><td><strong>Reachability analysis</strong></td><td>Determining whether a vulnerable code path can actually be invoked in a given artifact.</td></tr>
+        <tr><td><strong>SBOM</strong></td><td>Software Bill of Materials &mdash; a formal inventory of components and their relationships.</td></tr>
+        <tr><td><strong>SLSA</strong></td><td>Supply-chain Levels for Software Artifacts &mdash; a build-integrity framework with incremental levels.</td></tr>
+        <tr><td><strong>SPDX</strong></td><td>Software Package Data Exchange &mdash; Linux Foundation SBOM standard (ISO/IEC 5962:2021).</td></tr>
+        <tr><td><strong>SSDF</strong></td><td>Secure Software Development Framework (NIST SP 800-218).</td></tr>
+        <tr><td><strong>VEX</strong></td><td>Vulnerability Exploitability eXchange &mdash; machine-readable statement of whether a vulnerability affects a product.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ================= REFERENCES ================= -->
+<section class="section" id="references">
+  <span class="section-tag">Sources</span>
+  <h2>R &middot; References &amp; Sources</h2>
+  <p class="lead">All technical standards, incidents, and named-company practices in this document are drawn from the public primary sources below. Content from these sources has been paraphrased and summarized for compliance with licensing restrictions.</p>
+
+  <h4>Standards &amp; Frameworks</h4>
+  <ul class="clean" style="font-size:.9rem">
+    <li>SLSA &mdash; Supply-chain Levels for Software Artifacts, security levels &amp; build track. <span class="mono">slsa.dev/spec</span></li>
+    <li>Sigstore / Cosign signing documentation. <span class="mono">docs.sigstore.dev/cosign</span></li>
+    <li>OASIS CSAF &amp; CSAF VEX examples. <span class="mono">github.com/oasis-tcs/csaf</span></li>
+    <li>OpenVEX / OpenSSF; CISA VEX status &amp; justification guidance.</li>
+    <li>OWASP CycloneDX; SPDX (ISO/IEC 5962:2021).</li>
+    <li>NIST &mdash; EO 14028 SBOM guidance; SP 800-218 (SSDF); SP 800-161. <span class="mono">nist.gov</span></li>
+    <li>NIST National Vulnerability Database (NVD) &mdash; CVE-2021-44228, CVE-2024-3094.</li>
+  </ul>
+
+  <h4>Incidents (primary / authoritative reporting)</h4>
+  <ul class="clean" style="font-size:.9rem">
+    <li>SolarWinds / SUNBURST &mdash; FireEye/Mandiant &amp; Google Cloud Threat Intelligence.</li>
+    <li>Log4Shell (CVE-2021-44228) &mdash; Apache Software Foundation; NIST NVD; IBM X-Force.</li>
+    <li>XZ Utils backdoor (CVE-2024-3094) &mdash; NIST NVD; Openwall mailing-list disclosure; vendor analyses (Tenable, Sysdig, Wiz).</li>
+    <li>3CX cascading compromise &mdash; Mandiant / Google Cloud; MITRE ATT&amp;CK Campaign C0057; Unit&nbsp;42.</li>
+    <li>Codecov Bash Uploader &mdash; Codecov post-mortem; Rapid7; CISA/CCCS advisories.</li>
+    <li>CircleCI incident (Jan 2023) &mdash; CircleCI incident report &amp; security alerts.</li>
+    <li>npm event-stream / flatmap-stream &mdash; npm security advisory; Snyk post-mortem.</li>
+  </ul>
+
+  <h4>Tooling &amp; Vendor Documentation</h4>
+  <ul class="clean" style="font-size:.9rem">
+    <li>Sonatype &mdash; Repository Firewall Audit &amp; Quarantine documentation. <span class="mono">help.sonatype.com</span></li>
+    <li>Falco (CNCF) &amp; Cilium Tetragon &mdash; eBPF runtime security documentation.</li>
+    <li>Google &mdash; SLSA introduction (Google Security Blog); Binary Authorization for Borg. <span class="mono">cloud.google.com</span></li>
+    <li>Microsoft &mdash; open-source SBOM tool (SPDX). <span class="mono">github.com/microsoft/sbom-tool</span></li>
+    <li>Red Hat &mdash; CSAF VEX documents &amp; per-CVE VEX data. <span class="mono">redhat.com/security</span></li>
+    <li>Capital One &mdash; Cloud Custodian (open-source policy-as-code; CNCF).</li>
+  </ul>
+
+  <div class="callout illustrative">
+    <div class="ct">Verification &amp; Compliance Statement</div>
+    <p>Every factual claim in this document was verified against the public sources listed above at the time of authoring. Where a fact could not be publicly verified for a specific named organization &mdash; particularly internal implementations at insurance and banking firms &mdash; it is labelled <strong>"Illustrative enterprise example"</strong> rather than presented as fact. Source content has been paraphrased; no extended verbatim text is reproduced.</p>
+  </div>
+</section>
+
+</div><!-- /content -->
+
+<footer class="footer">
+  <div class="footer-inner">
+    <p><strong>Third-Party Software Supply Chain Governance Framework</strong> &mdash; Customer Deliverable</p>
+    <p>Prepared for Security Architects, DevSecOps &amp; Platform Engineers, Enterprise Architects, Risk &amp; Compliance, and Executive Leadership. Mapped to Red&nbsp;Hat OpenShift, Sonatype Nexus &amp; Repository Firewall, Prisma Cloud, Trivy, HashiCorp Vault, and Git-based CI/CD.</p>
+    <div class="disclaimer">
+      <strong>Disclaimer.</strong> This document is provided for architectural and governance guidance. It synthesizes publicly available standards, incident reporting, and vendor documentation cited in Section&nbsp;R. It does not constitute legal, regulatory, or professional security advice; mapping to specific regulatory obligations (e.g., NYDFS Part 500, DORA, sector supervisory requirements) should be confirmed with the enterprise's own legal and compliance functions. Named-company practices are described only as publicly documented; implementation patterns marked &ldquo;illustrative&rdquo; do not represent the actual internal systems of any organization. Standards and tooling evolve &mdash; verify version-specific details against primary sources before implementation.
+    </div>
+  </div>
+</footer>
+</main>
+</div>
+
+<button class="backtotop" id="backToTop" aria-label="Back to top">
+  <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M18 15l-6-6-6 6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+</button>
+
+<script>
+// ---------- Robust Mermaid rendering with graceful fallback ----------
+var MERMAID_CFG={
+  startOnLoad:false,
+  securityLevel:'loose',           // allow <b>/<br/> HTML labels
+  theme:'base',
+  themeVariables:{
+    primaryColor:'#eaf2f8', primaryTextColor:'#0b1f38', primaryBorderColor:'#2b577f',
+    lineColor:'#5a6776', fontFamily:'Inter, sans-serif', fontSize:'14px',
+    secondaryColor:'#f1f9fc', tertiaryColor:'#f9fbfd'
+  },
+  flowchart:{ curve:'basis', useMaxWidth:true, htmlLabels:true },
+  sequence:{ useMaxWidth:true, wrap:true }
+};
+function renderDiagrams(){
+  try{
+    mermaid.initialize(MERMAID_CFG);
+    if(typeof mermaid.run==='function'){ mermaid.run({querySelector:'.mermaid'}); }
+    else if(typeof mermaid.init==='function'){ mermaid.init(undefined,'.mermaid'); }
+  }catch(e){ showDiagramFallback(); }
+}
+function showDiagramFallback(){
+  document.querySelectorAll('.diagram').forEach(function(d){
+    var src=d.querySelector('.mermaid');
+    if(src){ src.style.display='none'; }
+    if(d.querySelector('.diagram-fallback')) return;
+    var note=document.createElement('div');
+    note.className='diagram-fallback';
+    note.innerHTML='&#9888;&nbsp; <strong>Diagram engine unavailable in this viewer.</strong> '+
+      'The diagrams load from an online library (mermaid). To see them, open this file in a '+
+      'normal web browser (Chrome/Edge/Firefox) with internet access &mdash; not the editor preview '+
+      'or an offline/locked-down network. All other content is unaffected.';
+    d.insertBefore(note, d.firstChild);
+  });
+}
+function bootMermaid(){
+  if(typeof mermaid!=='undefined'){ renderDiagrams(); return; }
+  // primary CDN blocked: try a fallback CDN, then degrade gracefully
+  var s=document.createElement('script');
+  s.src='https://unpkg.com/mermaid@10/dist/mermaid.min.js';
+  s.onload=function(){ renderDiagrams(); };
+  s.onerror=showDiagramFallback;
+  document.head.appendChild(s);
+  // safety net: if nothing rendered within 5s, show the fallback note
+  setTimeout(function(){
+    if(typeof mermaid==='undefined'){ showDiagramFallback(); }
+  },5000);
+}
+if(document.readyState==='loading'){
+  document.addEventListener('DOMContentLoaded',bootMermaid);
+}else{ bootMermaid(); }
+
+// Sidebar toggle (mobile)
+var menuToggle=document.getElementById('menuToggle');
+var sidebar=document.getElementById('sidebar');
+menuToggle&&menuToggle.addEventListener('click',function(){ sidebar.classList.toggle('open'); });
+document.querySelectorAll('#nav a').forEach(function(a){
+  a.addEventListener('click',function(){ if(window.innerWidth<=1024){ sidebar.classList.remove('open'); } });
+});
+
+// Scrollspy + back-to-top
+var sections=Array.prototype.slice.call(document.querySelectorAll('section.section'));
+var navLinks=Array.prototype.slice.call(document.querySelectorAll('#nav a'));
+var backToTop=document.getElementById('backToTop');
+function onScroll(){
+  var pos=window.scrollY+140, current='';
+  sections.forEach(function(s){ if(s.offsetTop<=pos){ current=s.id; } });
+  navLinks.forEach(function(l){
+    l.classList.toggle('active', l.getAttribute('href')==='#'+current);
+  });
+  backToTop.classList.toggle('show', window.scrollY>600);
+}
+window.addEventListener('scroll',onScroll,{passive:true});
+onScroll();
+backToTop.addEventListener('click',function(){ window.scrollTo({top:0,behavior:'smooth'}); });
+</script>
+</body>
+</html>
