@@ -1314,7 +1314,7 @@ flowchart TB
   <h4>Claim A &mdash; "It's a false positive"</h4>
   <ol class="steps">
     <li><h4>Reconcile coordinates</h4><p>Confirm the exact component, version, and PURL the scanner flagged. Many "false positives" are version-detection errors &mdash; verify against the image's package database and file hashes.</p></li>
-    <li><h4>Regenerate independently</h4><p>Run Trivy and a second tool (e.g., Syft + Grype) on the image. Concurring tools strengthen the finding; a divergence may validate the vendor's point.</p></li>
+    <li><h4>Regenerate independently</h4><p>Run Trivy and a second tool (e.g., Prisma Cloud, or Syft for SBOM regeneration) on the image. Concurring tools strengthen the finding; a divergence may validate the vendor's point.</p></li>
     <li><h4>Demand a signed VEX</h4><p>Require the vendor to express the false-positive claim as a signed VEX with a specific justification (e.g., <code>component_not_present</code>). A vendor unwilling to sign their own claim is a risk signal.</p></li>
     <li><h4>Corroborate the justification</h4><p>Test the justification against your independent SBOM and, where needed, escalate to reachability/runtime (Claims B/C).</p></li>
   </ol>
