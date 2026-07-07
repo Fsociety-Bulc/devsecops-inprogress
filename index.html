@@ -651,6 +651,27 @@ sequenceDiagram
 <span class="ky">PackageLicenseConcluded:</span> Apache-2.0
 <span class="ky">ExternalRef:</span> PACKAGE-MANAGER purl pkg:maven/org.apache.logging.log4j/log4j-core@2.17.1
 <span class="ky">PackageChecksum:</span> SHA256: 4f3c...e19a</pre>
+    <p><strong>The same component as YAML (SPDX):</strong> identical data, often easier to read. SPDX officially defines a YAML serialization alongside JSON, tag-value, and RDF.</p>
+<pre class="code"><span class="cm"># sbom.spdx.yaml  &mdash; SPDX, YAML serialization</span>
+<span class="ky">spdxVersion:</span> SPDX-2.3
+<span class="ky">packages:</span>
+  - <span class="ky">name:</span> log4j-core
+    <span class="ky">SPDXID:</span> SPDXRef-Package-log4j-core
+    <span class="ky">versionInfo:</span> <span class="st">"2.17.1"</span>
+    <span class="ky">licenseConcluded:</span> Apache-2.0
+    <span class="ky">checksums:</span>
+      - <span class="ky">algorithm:</span> SHA256
+        <span class="ky">checksumValue:</span> 4f3c...e19a
+    <span class="ky">externalRefs:</span>
+      - <span class="ky">referenceCategory:</span> PACKAGE-MANAGER
+        <span class="ky">referenceType:</span> purl
+        <span class="ky">referenceLocator:</span> pkg:maven/org.apache.logging.log4j/log4j-core@2.17.1</pre>
+    <div class="callout key">
+      <div class="ct">Is YAML machine-readable? Yes &mdash; with two things to note</div>
+      <p>YAML is fully machine-readable and interchangeable with JSON: any JSON document is also valid YAML, and both parse to the same data. YAML is often preferred for human editing and is standard across the Kubernetes/OpenShift ecosystem, while JSON is the more universal default emitted by most tools.</p>
+      <p><strong>Format support differs per standard.</strong> SPDX officially supports YAML (as above), JSON, tag-value, and RDF. CycloneDX's official serializations are JSON, XML, and Protobuf &mdash; not YAML &mdash; so for CycloneDX use JSON. Always confirm which serializations a given tool accepts.</p>
+      <p><strong>The signing caveat.</strong> For <em>cryptographically signed</em> evidence &mdash; signed VEX and in-toto/SLSA attestations &mdash; the signature is computed over exact bytes, so the signed-and-stored form is canonical JSON (typically wrapped in a DSSE envelope). You can author or view it as YAML, but verification runs against the canonical JSON so the hash stays stable. For unsigned inventory files like SBOMs, storing and consuming YAML directly is perfectly fine.</p>
+    </div>
   </div>
 
   <h4>2 &middot; Independent SBOM Regeneration</h4>
@@ -678,7 +699,7 @@ $ diff &lt;(jq -r <span class="st">'.components[].purl'</span> vendor.cdx.json |
     <p><strong>What it is:</strong> Inspecting the compiled binary itself &mdash; not the manifest or package list &mdash; to identify what code is actually baked in. This catches statically linked or vendored code that never appears in a package manifest.</p>
     <p><strong>Why it matters:</strong> A component can be present in the binary even when it is missing from the dependency list. Composition analysis sees what the manifest cannot.</p>
     <p><strong>Example:</strong> A Go binary statically links a vulnerable compression library. Nothing in a <code>go.mod</code> file flags it after compilation, but binary analysis fingerprints the embedded library and surfaces it.</p>
-    <p><strong>Tools:</strong> <code>Syft</code> (binary matchers), <code>Trivy</code>, and commercial software composition analysis (SCA) engines such as those in <code>Prisma Cloud</code>.</p>
+    <p><strong>Tools:</strong> <code>Prisma Cloud</code> software composition analysis (SCA) and <code>Trivy</code> (both fingerprint embedded/statically-linked code), with <code>Syft</code> binary matchers for SBOM-level detail.</p>
   </div>
 
   <h4>4 &middot; Component Coordinates (PURL) &amp; Hash Reconciliation</h4>
@@ -686,7 +707,7 @@ $ diff &lt;(jq -r <span class="st">'.components[].purl'</span> vendor.cdx.json |
     <p><strong>What it is:</strong> A <strong>PURL (Package URL)</strong> is a standardized identifier that names a component exactly &mdash; its ecosystem, name, and version &mdash; e.g. <code>pkg:npm/lodash@4.17.21</code>. <strong>Hash reconciliation</strong> means comparing the cryptographic hash (checksum) of the file you received against the known-good hash of the real component.</p>
     <p><strong>Why it matters:</strong> Together they test <em>"it's a false positive."</em> Scanners sometimes flag the wrong version. A precise PURL plus a matching hash either confirms or disproves that the flagged component is truly present.</p>
     <p><strong>Example:</strong> A scanner reports <code>openssl 1.1.1</code> (vulnerable). The vendor says it is actually <code>3.0.12</code> (patched). You compare the PURL and the file hash of the shipped library against the official <code>3.0.12</code> release hash. If they match, the scanner was wrong &mdash; a genuine false positive.</p>
-    <p><strong>Tools:</strong> <code>PURL</code> spec, <code>Trivy</code> / <code>Grype</code> (report PURLs), <code>sha256sum</code> / <code>cosign</code> (hash verification).</p>
+    <p><strong>Tools:</strong> <code>PURL</code> spec, <code>Trivy</code> and <code>Prisma Cloud</code> (report component PURLs), <code>cosign</code> / <code>sha256sum</code> (hash verification), with <code>Sonatype Nexus</code> holding the known-good component coordinates.</p>
   </div>
 
   <h4>5 &middot; Signed VEX &amp; Its Justification Keywords</h4>
@@ -705,11 +726,13 @@ $ diff &lt;(jq -r <span class="st">'.components[].purl'</span> vendor.cdx.json |
     </div>
     <p><strong>Tools &amp; formats:</strong> <code>OpenVEX</code> and <code>CSAF VEX</code> (the standards), <code>cosign</code> (signs and attaches VEX to the image as an attestation), <code>Trivy</code> (consumes VEX to suppress verified false positives during scans).</p>
     <p><strong>What the file looks like &mdash; OpenVEX (JSON):</strong> a vendor statement that CVE-2021-44228 does not affect their product, with a standardized <code>justification</code>. This is the machine-readable replacement for a verbal "it's a false positive."</p>
-<pre class="code"><span class="cm">// log4shell.openvex.json</span>
+<pre class="code"><span class="cm">// log4shell.openvex.json  &mdash; required fields: @context, @id, author, timestamp, version, statements</span>
 {
   <span class="ky">"@context"</span>: <span class="st">"https://openvex.dev/ns/v0.2.0"</span>,
+  <span class="ky">"@id"</span>: <span class="st">"https://openvex.dev/docs/public/vex-log4shell-app-2-4-0"</span>,
   <span class="ky">"author"</span>: <span class="st">"Acme Vendor Security &lt;psirt@acme.example&gt;"</span>,
   <span class="ky">"timestamp"</span>: <span class="st">"2026-02-11T09:00:00Z"</span>,
+  <span class="ky">"version"</span>: <span class="st">1</span>,
   <span class="ky">"statements"</span>: [
     {
       <span class="ky">"vulnerability"</span>: { <span class="ky">"name"</span>: <span class="st">"CVE-2021-44228"</span> },
@@ -722,15 +745,16 @@ $ diff &lt;(jq -r <span class="st">'.components[].purl'</span> vendor.cdx.json |
     }
   ]
 }</pre>
-    <p><strong>How you verify the signature and consume it:</strong> the VEX only counts as evidence once you confirm it was signed by the vendor's real key.</p>
-<pre class="code"><span class="cm"># Verify the vendor signed this VEX attestation (not tampered / not forged)</span>
-$ cosign verify-attestation --type openvex \
-    --certificate-identity psirt@acme.example \
-    vendor-registry.io/app@sha256:9b2c...d41f
+    <p><strong>How you consume it in a scan:</strong> point Trivy at the VEX file with the <code>--vex</code> flag. Trivy filters out the vulnerability and logs the status and justification it applied.</p>
+<pre class="code"><span class="cm"># Apply a local VEX file when scanning the image (Trivy --vex flag)</span>
+$ trivy image vendor-registry.io/app:2.4.0 --vex log4shell.openvex.json
+<span class="cm"># INFO  Filtered out the detected vulnerability</span>
+<span class="cm">#       {"VEX format": "OpenVEX", "vulnerability-id": "CVE-2021-44228",</span>
+<span class="cm">#        "status": "not_affected", "justification": "vulnerable_code_not_in_execute_path"}</span>
 
-<span class="cm"># Feed the verified VEX into the scan &mdash; confirmed non-issues are suppressed</span>
-$ trivy image --vex log4shell.openvex.json vendor-registry.io/app:2.4.0
-<span class="cm"># CVE-2021-44228 -&gt; suppressed (not_affected: vulnerable_code_not_in_execute_path)</span></pre>
+<span class="cm"># Alternatively, discover a VEX attestation attached to the image in the registry</span>
+$ trivy image vendor-registry.io/app:2.4.0 --vex oci</pre>
+    <p class="fig-cap" style="text-align:left">Command output above is adapted from the Trivy VEX documentation. Signature verification of an attached attestation is handled by <code>cosign verify-attestation</code> against the vendor's identity/key before the VEX is trusted.</p>
   </div>
 
   <h4>6 &middot; Reachability Analysis (Static Call-Graph)</h4>
@@ -738,7 +762,7 @@ $ trivy image --vex log4shell.openvex.json vendor-registry.io/app:2.4.0
     <p><strong>What it is:</strong> Static analysis that maps the program's call graph &mdash; every path of function calls &mdash; to determine whether execution can ever actually reach the vulnerable function. Done without running the code.</p>
     <p><strong>Why it matters:</strong> It tests <em>"the vulnerable code isn't reachable."</em> A library can contain a flaw, but if no call path in the application ever invokes the flawed function, the practical risk is far lower.</p>
     <p><strong>Example:</strong> An image includes a library with a vulnerability in its XML parser, but the application only ever calls the library's JSON functions. Call-graph analysis shows no path leads to the XML parser, supporting the vendor's claim.</p>
-    <p><strong>Tools:</strong> <code>Prisma Cloud</code> (reachability features), commercial SCA reachability engines, and language-specific call-graph analyzers.</p>
+    <p><strong>Tools:</strong> <code>Prisma Cloud</code> (reachability / code-path analysis) is the primary tool in this stack, complemented by language-specific call-graph analyzers where deeper inspection is needed.</p>
   </div>
 
   <h4>7 &middot; eBPF Runtime Confirmation &amp; Function-Level Telemetry</h4>
@@ -746,7 +770,19 @@ $ trivy image --vex log4shell.openvex.json vendor-registry.io/app:2.4.0
     <p><strong>What it is:</strong> <strong>eBPF</strong> is a Linux kernel technology that safely observes what a running program actually does &mdash; which modules it loads and which functions it executes &mdash; without modifying the application. "Function-level telemetry" is the record of that activity over a representative period.</p>
     <p><strong>Why it matters:</strong> Static analysis predicts behavior; runtime evidence proves it. eBPF is the <em>final arbiter</em>: if the vulnerable module never loads in production over a representative window, the claim that it "isn't executed" is confirmed by observation.</p>
     <p><strong>Example:</strong> A vendor claims a vulnerable module is never loaded. You monitor the workload with eBPF for a week under normal traffic and confirm the module is never mapped into memory &mdash; corroborating the static reachability finding with live evidence.</p>
-    <p><strong>Tools:</strong> <code>eBPF</code>, <code>Falco</code>, <code>Tetragon</code>, and the runtime monitoring in <code>Prisma Cloud</code>.</p>
+    <p><strong>Tools:</strong> <code>Prisma Cloud</code> runtime defense (eBPF-based) is the primary source of this telemetry in the stack, running as an OpenShift DaemonSet; the underlying <code>eBPF</code> technology (also exposed by Falco/Tetragon) is what makes the observation possible.</p>
+    <p><strong>What the evidence looks like &mdash; an illustrative runtime observation (JSON):</strong> a simplified, representative record of loaded/executed modules for the workload over the monitored window. The absence of the vulnerable module is the evidence that corroborates the vendor's claim. This is a conceptual shape, not a verbatim Prisma Cloud export &mdash; consult the product documentation for the exact schema.</p>
+<pre class="code"><span class="cm">// runtime-observation.json  &mdash; illustrative shape (not a verbatim vendor export)</span>
+{
+  <span class="ky">"image"</span>: <span class="st">"vendor-registry.io/app@sha256:9b2c...d41f"</span>,
+  <span class="ky">"namespace"</span>: <span class="st">"payments-prod"</span>,
+  <span class="ky">"observationWindow"</span>: <span class="st">"2026-02-04T00:00Z/2026-02-11T00:00Z"</span>,
+  <span class="ky">"cve"</span>: <span class="st">"CVE-2021-44228"</span>,
+  <span class="ky">"vulnerableModule"</span>: <span class="st">"log4j-core/JndiLookup"</span>,
+  <span class="ky">"loaded"</span>: <span class="st">false</span>,
+  <span class="ky">"executed"</span>: <span class="st">false</span>,
+  <span class="ky">"verdict"</span>: <span class="st">"not_in_execute_path_confirmed_at_runtime"</span>
+}</pre>
   </div>
 
   <h4>8 &middot; Vendor Security Advisory &amp; Config Attestation</h4>
